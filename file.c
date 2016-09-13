@@ -18,8 +18,12 @@ enum LOADSTATE {
 };
 
 enum FMTFUNC_PRIORITY {
+	PRIORITY_NONE,			//高优先级
+
 	PRIORITY_CONSTANT,
 	PRIORITY_VARIABLE,
+
+	PRIORITY_MAX,			//低优先级
 };
 
 struct FMTFuncRange {
@@ -33,6 +37,7 @@ struct FMTFuncStruct {
 	int priority;
 	int first;
 	FMTFunc func;
+	char arg[FUNC_NAME_MAX];
 	int tail;
 };
 
@@ -48,12 +53,50 @@ void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
 	out->func = NULL;
 	out->first = -1;
 	out->tail = -1;
-	if (strcmp("variable", funcStr)) {
+	if (strcmp("variable", funcStr) == 0) {
 		out->func = VARIABLE;
 		out->priority = PRIORITY_VARIABLE;
-	} else if (strcmp("constant", funcStr)) {
+	} else if (strcmp("constant", funcStr) == 0) {
 		out->func = CONSTANT;
 		out->priority = PRIORITY_CONSTANT;
+	}
+}
+
+void doFMTFunc(char **out, char const *in, struct FMTFuncStruct *fmtFuncStruct, int fmtFuncStructCount) {
+	int i, j, k;
+
+	int fmtFuncIdxCount[PRIORITY_MAX - 1] = {0};
+	int fmtFuncIdx[PRIORITY_MAX - 1][FUNC_COUNT_MAX] = {0};
+	
+	for (i = 0; i < fmtFuncStructCount; i++) {
+		int l_fmtFuncIdx = fmtFuncStruct[i].priority - 1;
+		fmtFuncIdx[l_fmtFuncIdx][fmtFuncIdxCount[l_fmtFuncIdx]] = i;
+		fmtFuncIdxCount[l_fmtFuncIdx]++;
+	}
+
+	for (i = 0; i < PRIORITY_MAX - 1; i++) {
+		for (j = 0; j < fmtFuncIdxCount[i]; j++) {
+
+			int idx = fmtFuncIdx[i][j];
+			int inF = 0;
+			int inT = strlen(in);
+
+			for (k = idx - 1; k >= 0; k--) {
+				if (fmtFuncStruct[idx].tail != -1) {
+
+					break;
+				}
+			}
+
+			for (k = idx + 1; k < fmtFuncStructCount; k++) {
+				if (fmtFuncStruct[idx].first != -1) {
+
+					break;
+				}
+			}
+
+			fmtFuncStruct[idx].func(fmtFuncStruct + idx, in, 10, fmtFuncStruct[idx].arg);
+		}
 	}
 }
 
@@ -108,8 +151,14 @@ void stringFmt(char **out, int *outCount, char const *in, char const *fmt) {
 		char funcStr[FUNC_NAME_MAX];
 		int funcNameF = fmtFuncRange[i]._1;
 		int funcNameT = fmtFuncRange[i]._2;
+		int argF = fmtFuncRange[i]._2;
+		int argT = fmtFuncRange[i]._3;
 		memcpy(funcStr, fmt + funcNameF + 1, funcNameT - funcNameF - 1);
-		funcStr[funcNameT - funcNameF] = 0;
+		memcpy(fmtFuncStruct[i].arg, fmt + argF + 1, argT - argF - 1);
+		funcStr[funcNameT - funcNameF - 1] = 0;
+		fmtFuncStruct[i].arg[argT - argF - 1] = 0;
 		setFMTFuncStruct(fmtFuncStruct + i, funcStr);
 	}
+
+	doFMTFunc(out, in, fmtFuncStruct, funcCount);
 }
