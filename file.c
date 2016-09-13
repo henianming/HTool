@@ -7,7 +7,7 @@
 #define FUNC_COUNT_MAX 256
 #define FUNC_NAME_MAX 256
 
-#define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inLen, char const *arg
+#define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
 typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, char const*);
 
 enum LOADSTATE {
@@ -83,19 +83,19 @@ void doFMTFunc(char **out, char const *in, struct FMTFuncStruct *fmtFuncStruct, 
 
 			for (k = idx - 1; k >= 0; k--) {
 				if (fmtFuncStruct[idx].tail != -1) {
-
+					inF = fmtFuncStruct[idx].tail;
 					break;
 				}
 			}
 
 			for (k = idx + 1; k < fmtFuncStructCount; k++) {
 				if (fmtFuncStruct[idx].first != -1) {
-
+					inT = fmtFuncStruct[idx].first;
 					break;
 				}
 			}
 
-			fmtFuncStruct[idx].func(fmtFuncStruct + idx, in, 10, fmtFuncStruct[idx].arg);
+			fmtFuncStruct[idx].func(fmtFuncStruct + idx, in, inF, inT, fmtFuncStruct[idx].arg);
 		}
 	}
 }
