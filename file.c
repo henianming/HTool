@@ -10,6 +10,7 @@
 #define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
 typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, char const*);
 
+
 enum LOADSTATE {
 	LOADSTATE_1,
 	LOADSTATE_2,
@@ -42,6 +43,11 @@ struct FMTFuncStruct {
 	int tail;
 };
 
+/*
+exp:	aaaaabbb12bb
+func:	[constant_s(ab)]
+result:	4,6
+*/
 void CONSTANT_S(FMTFuncArg) {
 	int l_F;
 	int l_T;
@@ -64,6 +70,11 @@ void CONSTANT_S(FMTFuncArg) {
 	out->tail = l_T;
 }
 
+/*
+exp:	aaaaabbb12bb
+func:	[constant_n(0,3)]
+result:	0,3
+*/
 void CONSTANT_N(FMTFuncArg) {
 	int l_F;
 	int l_T;
@@ -84,6 +95,78 @@ void CONSTANT_N(FMTFuncArg) {
 	out->tail = l_T;
 }
 
+enum LOADNUMSTATE {
+	LOADNUMSTATE_1,
+	LOADNUMSTATE_2,
+	LOADNUMSTATE_3,
+};
+
+/*
+exp:	aaaaabbb12bb
+func:	[constant_n(0,3)]
+result:	0,3
+*/
+void GNUMFunc_1(GNUMFuncArg) {
+	int i;
+	int l_F;
+	int l_T;
+	enum LOADNUMSTATE lns = LOADNUMSTATE_1;
+	
+	for (i = inF; i < inT;i++){
+		switch(lns) {
+		case LOADNUMSTATE_1:
+			if (in[i] >= '0' && in[i] <= '9') {
+				l_F = i;
+				
+				lns = LOADNUMSTATE_2;
+			}
+			break;
+		case LOADNUMSTATE_2:
+			if (!(in[i] >= '0' && in[i] <= '9') || (i == (inT - 1))) {
+				l_T = i;
+				
+				lns = LOADNUMSTATE_3;
+			}
+			break;
+		case LOADNUMSTATE_3:
+			*outF = l_F;
+			*outT = l_T;
+			return;
+		}
+	}
+	
+	*outF = -1;
+	*outT = -1;
+}
+
+void GNUMFunc_2(GNUMFuncArg) {
+	
+}
+
+void NUMBER(FMTFuncArg) {
+	int l_F;
+	int l_T;
+	int numStyle;
+	
+	sscanf_s(arg, "%d", &numStyle);
+	
+	switch (numStyle) {
+	case 1:
+		GNUMFunc_1(&l_F, &l_T, in, inF, inT);
+		break;
+	case 2:
+		GNUMFunc_2(&l_F, &l_T, in, inF, inT);
+		break;
+	default:
+		break;
+	}
+}
+
+/*
+exp:	aaaaabbb12bb
+func:	[variable()]
+result:	����޶�����
+*/
 void VARIABLE(FMTFuncArg) {
 	out->first = inF;
 	out->tail = inT;
