@@ -20,7 +20,8 @@ enum LOADSTATE {
 enum FMTFUNC_PRIORITY {
 	PRIORITY_NONE,			//高优先级
 
-	PRIORITY_CONSTANT,
+	PRIORITY_CONSTANT_S,
+	PRIORITY_CONSTANT_N,
 	PRIORITY_VARIABLE,
 
 	PRIORITY_MAX,			//低优先级
@@ -41,12 +42,51 @@ struct FMTFuncStruct {
 	int tail;
 };
 
-void VARIABLE(FMTFuncArg) {
-	
+void CONSTANT_S(FMTFuncArg) {
+	int l_F;
+	int l_T;
+
+	char temp[FUNC_NAME_MAX];
+
+	memcpy(temp, in + inF, inT - inF);
+	temp[inT - inF] = 0;
+
+	char *temp2 = strstr(temp, arg);
+	if (temp2) {
+		l_F = inF + (temp2 - temp);
+		l_T = l_F + strlen(arg);
+	} else {
+		l_F = -1;
+		l_T = -1;
+	}
+
+	out->first = l_F;
+	out->tail = l_T;
 }
 
-void CONSTANT(FMTFuncArg) {
+void CONSTANT_N(FMTFuncArg) {
+	int l_F;
+	int l_T;
 
+	sscanf_s(arg, "%d,%d", &l_F, &l_T);
+
+	if (l_F < inF) {
+		l_F = inF;
+		printf("CONSTANT_N() : (l_F = %d) < (inF = %d)\n", l_F, inF);
+	}
+
+	if (l_T > inT) {
+		l_T = inT;
+		printf("CONSTANT_N() : (l_T = %d) < (inT = %d)\n", l_T, inT);
+	}
+
+	out->first = l_F;
+	out->tail = l_T;
+}
+
+void VARIABLE(FMTFuncArg) {
+	out->first = inF;
+	out->tail = inT;
 }
 
 void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
@@ -56,9 +96,12 @@ void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
 	if (strcmp("variable", funcStr) == 0) {
 		out->func = VARIABLE;
 		out->priority = PRIORITY_VARIABLE;
-	} else if (strcmp("constant", funcStr) == 0) {
-		out->func = CONSTANT;
-		out->priority = PRIORITY_CONSTANT;
+	} else if (strcmp("constant_n", funcStr) == 0) {
+		out->func = CONSTANT_N;
+		out->priority = PRIORITY_CONSTANT_N;
+	} else if (strcmp("constant_s", funcStr) == 0) {
+		out->func = CONSTANT_S;
+		out->priority = PRIORITY_CONSTANT_S;
 	}
 }
 
@@ -82,15 +125,15 @@ void doFMTFunc(char **out, char const *in, struct FMTFuncStruct *fmtFuncStruct, 
 			int inT = strlen(in);
 
 			for (k = idx - 1; k >= 0; k--) {
-				if (fmtFuncStruct[idx].tail != -1) {
-					inF = fmtFuncStruct[idx].tail;
+				if (fmtFuncStruct[k].tail != -1) {
+					inF = fmtFuncStruct[k].tail;
 					break;
 				}
 			}
 
 			for (k = idx + 1; k < fmtFuncStructCount; k++) {
-				if (fmtFuncStruct[idx].first != -1) {
-					inT = fmtFuncStruct[idx].first;
+				if (fmtFuncStruct[k].first != -1) {
+					inT = fmtFuncStruct[k].first;
 					break;
 				}
 			}

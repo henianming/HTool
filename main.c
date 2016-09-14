@@ -3,8 +3,8 @@
 int main() {
 	char *fmtedStr;
 	int fmtedStrLen;
-	stringFmt(&fmtedStr, &fmtedStrLen, "aaaaabbbbb", "[constant(0,3)]aaaa[variable()][constant(9,10)]");
-	//Àë¿ª¾À·×Ë«·½µÄ
+	stringFmt(&fmtedStr, &fmtedStrLen, "aaaaabbbbb", "[constant_n(0,3)][variable()][constant_s(ab)]");
+
 	while (1);
 	return 0;
 }
