@@ -10,6 +10,7 @@
 #define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
 typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, char const*);
 
+#define GNUMFuncArg int &outF, int &outT, char const *in
 
 enum LOADSTATE {
 	LOADSTATE_1,
@@ -165,7 +166,7 @@ void NUMBER(FMTFuncArg) {
 /*
 exp:	aaaaabbb12bb
 func:	[variable()]
-result:	ï¿½ï¿½ï¿½ï¿½Þ¶ï¿½ï¿½ï¿½ï¿½ï¿½
+result:	×î´óÏÞ¶ÈÀ©ÈÝ
 */
 void VARIABLE(FMTFuncArg) {
 	out->first = inF;
