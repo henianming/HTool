@@ -8,9 +8,9 @@
 #define FUNC_NAME_MAX 256
 
 #define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
-typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, char const*);
+typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, int, char const*);
 
-#define GNUMFuncArg int &outF, int &outT, char const *in
+#define GNUMFuncArg int *outF, int *outT, char const *in, char const *inArg
 
 enum LOADSTATE {
 	LOADSTATE_1,
@@ -24,6 +24,7 @@ enum FMTFUNC_PRIORITY {
 
 	PRIORITY_CONSTANT_S,
 	PRIORITY_CONSTANT_N,
+	PRIORITY_NUMBER,
 	PRIORITY_VARIABLE,
 
 	PRIORITY_MAX,			//µÕ”≈œ»º∂
@@ -80,7 +81,7 @@ void CONSTANT_N(FMTFuncArg) {
 	int l_F;
 	int l_T;
 
-	sscanf_s(arg, "%d,%d", &l_F, &l_T);
+	sscanf(arg, "%d,%d", &l_F, &l_T);
 
 	if (l_F < inF) {
 		l_F = inF;
@@ -104,15 +105,16 @@ enum LOADNUMSTATE {
 
 /*
 exp:	aaaaabbb12bb
-func:	[constant_n(0,3)]
+func:	[GNUMFunc_1S(0,3)]
 result:	0,3
 */
-void GNUMFunc_1(GNUMFuncArg) {
+void GNUMFunc_1S(GNUMFuncArg) {
 	int i;
 	int l_F;
 	int l_T;
 	enum LOADNUMSTATE lns = LOADNUMSTATE_1;
 	
+	/*
 	for (i = inF; i < inT;i++){
 		switch(lns) {
 		case LOADNUMSTATE_1:
@@ -138,9 +140,10 @@ void GNUMFunc_1(GNUMFuncArg) {
 	
 	*outF = -1;
 	*outT = -1;
+	*/
 }
 
-void GNUMFunc_2(GNUMFuncArg) {
+void GNUMFunc_2S(GNUMFuncArg) {
 	
 }
 
@@ -148,19 +151,20 @@ void NUMBER(FMTFuncArg) {
 	int l_F;
 	int l_T;
 	int numStyle;
+	char l_arg[FUNC_NAME_MAX] = {0};
 	
-	sscanf_s(arg, "%d", &numStyle);
-	
+	sscanf(arg, "%d,%s", &numStyle, l_arg);
+	/*
 	switch (numStyle) {
 	case 1:
-		GNUMFunc_1(&l_F, &l_T, in, inF, inT);
+		GNUMFunc_1S(&l_F, &l_T, in, inF, inT);
 		break;
 	case 2:
-		GNUMFunc_2(&l_F, &l_T, in, inF, inT);
+		GNUMFunc_2S(&l_F, &l_T, in, inF, inT);
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
 /*
@@ -186,6 +190,9 @@ void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
 	} else if (strcmp("constant_s", funcStr) == 0) {
 		out->func = CONSTANT_S;
 		out->priority = PRIORITY_CONSTANT_S;
+	} else if (strcmp("number", funcStr) == 0) {
+		out->func = NUMBER;
+		out->priority = PRIORITY_NUMBER;
 	}
 }
 
