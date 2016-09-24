@@ -1,10 +1,18 @@
 #include "file.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void printFMT(char const *in, int const *idx, int idxCount) {
 	int i;
 
 	for (i = 0; i < idxCount; i++) {
+		char *buf = (char*)malloc(idx[2 * i + 1] - idx[2 * i] + 1);
 
+		memcpy(buf, in + idx[2 * i], idx[2 * i + 1] - idx[2 * i]);
+		buf[idx[2 * i + 1] - idx[2 * i]] = 0;
+
+		printf("%s ", buf);
+		free(buf);
 	}
 }
 
