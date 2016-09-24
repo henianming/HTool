@@ -13,8 +13,6 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        wndbatchrename.cpp \
-    commondownlist.cpp
+        wndbatchrename.cpp
 
-HEADERS  += wndbatchrename.h \
-    commondownlist.h
+HEADERS  += wndbatchrename.h

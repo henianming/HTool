@@ -1,5 +1,6 @@
 Debug/
 .vs/
+build*/
 
 *.db
 *.opendb

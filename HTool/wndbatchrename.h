@@ -4,8 +4,9 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QLineEdit>
 #include <QTableView>
+#include <QComboBox>
+#include <QPushButton>
 
 class WndBatchRename : public QWidget
 {
@@ -33,7 +34,8 @@ public:
 	//---左对比区域列表框
 	QTableView *m_listLeftTableView;
 	//---左对比区域格式输入框
-	QLineEdit *m_fmtLeftLineEdit;
+	QComboBox *m_fmtLeftComboBox;
+	QPushButton *m_fmtLeftOkBtn;
 	//--中间控制区
 	QWidget *m_controlAreaWidget;
 	QVBoxLayout *m_controlAreaLayout;
@@ -43,7 +45,7 @@ public:
 	//---右对比区域列表框
 	QTableView *m_listRightTableView;
 	//---右对比区域格式输入框
-	QLineEdit *m_fmtRightLineEdit;
+	QComboBox *m_fmtRightComboBox;
 };
 
 #endif // WNDBATCHRENAME_H

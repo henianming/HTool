@@ -6,6 +6,7 @@
 
 #define FUNC_COUNT_MAX 256
 #define FUNC_NAME_MAX 256
+#define FUNC_ARG_MAX 256
 
 #define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
 typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, int, char const*);
@@ -41,7 +42,7 @@ struct FMTFuncStruct {
 	int priority;
 	int first;
 	FMTFunc func;
-	char arg[FUNC_NAME_MAX];
+	char arg[FUNC_ARG_MAX];
 	int tail;
 };
 
@@ -54,7 +55,7 @@ void CONSTANT_S(FMTFuncArg) {
 	int l_F;
 	int l_T;
 
-	char temp[FUNC_NAME_MAX];
+	char temp[FUNC_ARG_MAX];
 
 	memcpy(temp, in + inF, inT - inF);
 	temp[inT - inF] = 0;
@@ -113,38 +114,38 @@ void GNUMFunc_1S(GNUMFuncArg) {
 	int l_F;
 	int l_T;
 	enum LOADNUMSTATE lns = LOADNUMSTATE_1;
-	
+
 	/*
 	for (i = inF; i < inT;i++){
-		switch(lns) {
-		case LOADNUMSTATE_1:
-			if (in[i] >= '0' && in[i] <= '9') {
-				l_F = i;
-				
-				lns = LOADNUMSTATE_2;
-			}
-			break;
-		case LOADNUMSTATE_2:
-			if (!(in[i] >= '0' && in[i] <= '9') || (i == (inT - 1))) {
-				l_T = i;
-				
-				lns = LOADNUMSTATE_3;
-			}
-			break;
-		case LOADNUMSTATE_3:
-			*outF = l_F;
-			*outT = l_T;
-			return;
-		}
+	switch(lns) {
+	case LOADNUMSTATE_1:
+	if (in[i] >= '0' && in[i] <= '9') {
+	l_F = i;
+
+	lns = LOADNUMSTATE_2;
 	}
-	
+	break;
+	case LOADNUMSTATE_2:
+	if (!(in[i] >= '0' && in[i] <= '9') || (i == (inT - 1))) {
+	l_T = i;
+
+	lns = LOADNUMSTATE_3;
+	}
+	break;
+	case LOADNUMSTATE_3:
+	*outF = l_F;
+	*outT = l_T;
+	return;
+	}
+	}
+
 	*outF = -1;
 	*outT = -1;
 	*/
 }
 
 void GNUMFunc_2S(GNUMFuncArg) {
-	
+
 }
 
 void NUMBER(FMTFuncArg) {
@@ -152,18 +153,18 @@ void NUMBER(FMTFuncArg) {
 	int l_T;
 	int numStyle;
 	char l_arg[FUNC_NAME_MAX] = {0};
-	
+
 	sscanf(arg, "%d,%s", &numStyle, l_arg);
 	/*
 	switch (numStyle) {
 	case 1:
-		GNUMFunc_1S(&l_F, &l_T, in, inF, inT);
-		break;
+	GNUMFunc_1S(&l_F, &l_T, in, inF, inT);
+	break;
 	case 2:
-		GNUMFunc_2S(&l_F, &l_T, in, inF, inT);
-		break;
+	GNUMFunc_2S(&l_F, &l_T, in, inF, inT);
+	break;
 	default:
-		break;
+	break;
 	}*/
 }
 
@@ -177,31 +178,14 @@ void VARIABLE(FMTFuncArg) {
 	out->tail = inT;
 }
 
-void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
-	out->func = NULL;
-	out->first = -1;
-	out->tail = -1;
-	if (strcmp("variable", funcStr) == 0) {
-		out->func = VARIABLE;
-		out->priority = PRIORITY_VARIABLE;
-	} else if (strcmp("constant_n", funcStr) == 0) {
-		out->func = CONSTANT_N;
-		out->priority = PRIORITY_CONSTANT_N;
-	} else if (strcmp("constant_s", funcStr) == 0) {
-		out->func = CONSTANT_S;
-		out->priority = PRIORITY_CONSTANT_S;
-	} else if (strcmp("number", funcStr) == 0) {
-		out->func = NUMBER;
-		out->priority = PRIORITY_NUMBER;
-	}
-}
 
-void doFMTFunc(char **out, char const *in, struct FMTFuncStruct *fmtFuncStruct, int fmtFuncStructCount) {
+
+void doFMTFunc(int *out, char const *in, struct FMTFuncStruct *fmtFuncStruct, int fmtFuncStructCount) {
 	int i, j, k;
 
 	int fmtFuncIdxCount[PRIORITY_MAX - 1] = {0};
 	int fmtFuncIdx[PRIORITY_MAX - 1][FUNC_COUNT_MAX] = {0};
-	
+
 	for (i = 0; i < fmtFuncStructCount; i++) {
 		int l_fmtFuncIdx = fmtFuncStruct[i].priority - 1;
 		fmtFuncIdx[l_fmtFuncIdx][fmtFuncIdxCount[l_fmtFuncIdx]] = i;
@@ -234,42 +218,37 @@ void doFMTFunc(char **out, char const *in, struct FMTFuncStruct *fmtFuncStruct, 
 	}
 }
 
-void stringFmt(char **out, int *outCount, char const *in, char const *fmt) {
-	int i;
-	int idx = 0;
-	int funcCount = 0;
-	struct FMTFuncRange fmtFuncRange[FUNC_COUNT_MAX];
-	struct FMTFuncStruct fmtFuncStruct[FUNC_COUNT_MAX];
-	char const *l_in = in;
+void fillFMTFuncRange(struct FMTFuncRange *out, int *outCount, char const *fmt) {
 	char const *l_fmt = fmt;
 	enum LOADSTATE ls = LOADSTATE_1;
+	int funcCount = 0;
 
 	while (*l_fmt != 0 && funcCount < FUNC_COUNT_MAX) {
 		switch (ls) {
 		case LOADSTATE_1:
 			if (*l_fmt == '[') {
-				fmtFuncRange[funcCount]._1 = idx;
+				out[funcCount]._1 = l_fmt - fmt;
 
 				ls = LOADSTATE_2;
 			}
 			break;
 		case LOADSTATE_2:
 			if (*l_fmt == '(') {
-				fmtFuncRange[funcCount]._2 = idx;
+				out[funcCount]._2 = l_fmt - fmt;
 
 				ls = LOADSTATE_3;
 			}
 			break;
 		case LOADSTATE_3:
 			if (*l_fmt == ')') {
-				fmtFuncRange[funcCount]._3 = idx;
+				out[funcCount]._3 = l_fmt - fmt;
 
 				ls = LOADSTATE_4;
 			}
 			break;
 		case LOADSTATE_4:
 			if (*l_fmt == ']') {
-				fmtFuncRange[funcCount]._4 = idx;
+				out[funcCount]._4 = l_fmt - fmt;
 
 				funcCount++;
 				ls = LOADSTATE_1;
@@ -277,22 +256,68 @@ void stringFmt(char **out, int *outCount, char const *in, char const *fmt) {
 			break;
 		}
 
-		idx++;
 		l_fmt++;
 	}
 
-	for (i = 0; i < funcCount; i++) {
-		char funcStr[FUNC_NAME_MAX];
-		int funcNameF = fmtFuncRange[i]._1;
-		int funcNameT = fmtFuncRange[i]._2;
-		int argF = fmtFuncRange[i]._2;
-		int argT = fmtFuncRange[i]._3;
-		memcpy(funcStr, fmt + funcNameF + 1, funcNameT - funcNameF - 1);
-		memcpy(fmtFuncStruct[i].arg, fmt + argF + 1, argT - argF - 1);
-		funcStr[funcNameT - funcNameF - 1] = 0;
-		fmtFuncStruct[i].arg[argT - argF - 1] = 0;
-		setFMTFuncStruct(fmtFuncStruct + i, funcStr);
+	*outCount = funcCount;
+}
+
+void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
+	out->func = NULL;
+	out->first = -1;
+	out->tail = -1;
+	if (strcmp("variable", funcStr) == 0) {
+		out->func = VARIABLE;
+		out->priority = PRIORITY_VARIABLE;
+	} else if (strcmp("constant_n", funcStr) == 0) {
+		out->func = CONSTANT_N;
+		out->priority = PRIORITY_CONSTANT_N;
+	} else if (strcmp("constant_s", funcStr) == 0) {
+		out->func = CONSTANT_S;
+		out->priority = PRIORITY_CONSTANT_S;
+	} else if (strcmp("number", funcStr) == 0) {
+		out->func = NUMBER;
+		out->priority = PRIORITY_NUMBER;
 	}
+}
+
+void fillFMTFuncStruct(struct FMTFuncStruct *out, struct FMTFuncRange const *in, int inCount, char const *fmt) {
+	int i;
+
+	for (i = 0; i < inCount; i++) {
+		char funcStr[FUNC_NAME_MAX];
+		unsigned int funcNameF = in[i]._1;
+		unsigned int funcNameT = in[i]._2;
+		unsigned int argF = in[i]._2;
+		unsigned int argT = in[i]._3;
+		memcpy(funcStr, fmt + funcNameF + 1, funcNameT - funcNameF - 1);
+		memcpy(out[i].arg, fmt + argF + 1, argT - argF - 1);
+		funcStr[funcNameT - funcNameF - 1] = 0;
+		out[i].arg[argT - argF - 1] = 0;
+		setFMTFuncStruct(out + i, funcStr);
+	}
+}
+
+void fillOut(int *out, struct FMTFuncStruct *in, int inCount) {
+	int i;
+
+	for (i = 0; i < inCount; i++) {
+		out[2 * i] = in[i].first;
+		out[2 * i + 1] = in[i].tail;
+	}
+}
+
+void stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
+	int funcCount = 0;
+	struct FMTFuncRange fmtFuncRange[FUNC_COUNT_MAX];
+	struct FMTFuncStruct fmtFuncStruct[FUNC_COUNT_MAX];
+
+	fillFMTFuncRange(fmtFuncRange, &funcCount, fmt);
+
+	fillFMTFuncStruct(fmtFuncStruct, fmtFuncRange, funcCount, fmt);
 
 	doFMTFunc(out, in, fmtFuncStruct, funcCount);
+
+	fillOut(out, fmtFuncStruct, funcCount);
+	*outCount = funcCount;
 }
