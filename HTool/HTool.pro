@@ -11,8 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = HTool
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
-        wndbatchrename.cpp
+        wndbatchrename.cpp \
+	wndfiledecode.cpp \
 
-HEADERS  += wndbatchrename.h
+HEADERS  += wndbatchrename.h \
+	wndfiledecode.h \

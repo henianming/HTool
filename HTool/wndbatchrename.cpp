@@ -8,28 +8,24 @@ WndBatchRename::WndBatchRename(QWidget *parent)
 	m_compareAreaLayout = new QHBoxLayout();
 	m_compareAreaLeftWidget = new QWidget();
 	m_compareAreaLeftLayout = new QVBoxLayout();
-	m_listLeftTableView = new QTableView();
-	m_fmtLeftComboBox = new QComboBox();
 	m_controlAreaWidget = new QWidget();
 	m_controlAreaLayout = new QVBoxLayout();
+	m_l2rBtn = new QPushButton();
+	m_r2lBtn = new QPushButton();
 	m_compareAreaRightWidget = new QWidget();
 	m_compareAreaRightLayout = new QVBoxLayout();
-	m_listRightTableView = new QTableView();
-	m_fmtRightComboBox = new QComboBox();
 
 	Show();
 }
 
 WndBatchRename::~WndBatchRename()
 {
-	if (m_fmtRightComboBox) {delete m_fmtRightComboBox; m_fmtRightComboBox = NULL;}
-	if (m_listRightTableView) {delete m_listRightTableView; m_listRightTableView = NULL;}
 	if (m_compareAreaRightLayout) {delete m_compareAreaRightLayout; m_compareAreaRightLayout = NULL;}
 	if (m_compareAreaRightWidget) {delete m_compareAreaRightWidget; m_compareAreaRightWidget = NULL;}
+	if (m_r2lBtn) {delete m_r2lBtn; m_r2lBtn = NULL;}
+	if (m_l2rBtn) {delete m_l2rBtn; m_l2rBtn = NULL;}
 	if (m_controlAreaLayout) {delete m_controlAreaLayout; m_controlAreaLayout = NULL;}
 	if (m_controlAreaWidget) {delete m_controlAreaWidget; m_controlAreaWidget = NULL;}
-	if (m_fmtLeftComboBox) {delete m_fmtLeftComboBox; m_fmtLeftComboBox = NULL;}
-	if (m_listLeftTableView) {delete m_listLeftTableView; m_listLeftTableView = NULL;}
 	if (m_compareAreaLeftLayout) {delete m_compareAreaLeftLayout; m_compareAreaLeftLayout = NULL;}
 	if (m_compareAreaLeftWidget) {delete m_compareAreaLeftWidget; m_compareAreaLeftWidget = NULL;}
 	if (m_compareAreaLayout) {delete m_compareAreaLayout; m_compareAreaLayout = NULL;}
@@ -53,19 +49,16 @@ void WndBatchRename::Show()
 
 	m_compareAreaLeftWidget->setLayout(m_compareAreaLeftLayout);
 
-	m_compareAreaLeftLayout->addWidget(m_listLeftTableView);
-	m_compareAreaLeftLayout->addWidget(m_fmtLeftComboBox);
-
-	m_fmtLeftComboBox->setEditable(true);
-
 	m_controlAreaWidget->setLayout(m_controlAreaLayout);
 
+	m_controlAreaLayout->addWidget(m_l2rBtn);
+	m_controlAreaLayout->addWidget(m_r2lBtn);
+
+	m_l2rBtn->setText("->");
+
+	m_r2lBtn->setText("<-");
+
 	m_compareAreaRightWidget->setLayout(m_compareAreaRightLayout);
-
-	m_compareAreaRightLayout->addWidget(m_listRightTableView);
-	m_compareAreaRightLayout->addWidget(m_fmtRightComboBox);
-
-	m_fmtRightComboBox->setEditable(true);
 }
 
 void WndBatchRename::Hide()

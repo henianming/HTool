@@ -1,4 +1,5 @@
 #include "file.h"
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,11 +15,13 @@ void printFMT(char const *in, int const *idx, int idxCount) {
 		printf("%s ", buf);
 		free(buf);
 	}
+	
+	printf("\n");
 }
 
 int main() {
 	char *fmtStr = "aaaaaaaabbbbbbbb";
-	char *fmtFunc = "[constant_n(0,4)][constant_s(ab)][constant_n(9,11)]";
+	char *fmtFunc = "[constant_n(0,4)][constant_s(ab)][constant_n(9,110)]";
 	int fmtedIdx[512];
 	int fmtedCount;
 	
@@ -26,6 +29,6 @@ int main() {
 
 	printFMT(fmtStr, fmtedIdx, fmtedCount);
 
-	while (1);
+	system("pause");
 	return 0;
 }

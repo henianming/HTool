@@ -4,16 +4,36 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QTableView>
-#include <QComboBox>
 #include <QPushButton>
 
 class WndBatchRename : public QWidget
 {
 	Q_OBJECT
+public:
+	
+protected:
+	
 private:
 	int const m_wndDefWidth = 1280;
 	int const m_wndDefHeight = 720;
+	
+	//控件区
+	//主布局
+	QVBoxLayout *m_mainLayout;
+	//-对比区域
+	QWidget *m_compareAreaWidget;
+	QHBoxLayout *m_compareAreaLayout;
+	//--左对比区域------------------------------------准备集成
+	QWidget *m_compareAreaLeftWidget;
+	QVBoxLayout *m_compareAreaLeftLayout;
+	//--中间控制区
+	QWidget *m_controlAreaWidget;
+	QVBoxLayout *m_controlAreaLayout;
+	QPushButton *m_l2rBtn;
+	QPushButton *m_r2lBtn;
+	//--右对比区域------------------------------------准备集成
+	QWidget *m_compareAreaRightWidget;
+	QVBoxLayout *m_compareAreaRightLayout;
 
 public:
 	WndBatchRename(QWidget *parent = 0);
@@ -21,31 +41,11 @@ public:
 	void Show();
 	void Hide();
 	void Update();
+	
+protected:
+	
+private:
 
-	//控件区
-	//主布局
-	QVBoxLayout *m_mainLayout;
-	//-对比区域
-	QWidget *m_compareAreaWidget;
-	QHBoxLayout *m_compareAreaLayout;
-	//--左对比区域
-	QWidget *m_compareAreaLeftWidget;
-	QVBoxLayout *m_compareAreaLeftLayout;
-	//---左对比区域列表框
-	QTableView *m_listLeftTableView;
-	//---左对比区域格式输入框
-	QComboBox *m_fmtLeftComboBox;
-	QPushButton *m_fmtLeftOkBtn;
-	//--中间控制区
-	QWidget *m_controlAreaWidget;
-	QVBoxLayout *m_controlAreaLayout;
-	//--右对比区域
-	QWidget *m_compareAreaRightWidget;
-	QVBoxLayout *m_compareAreaRightLayout;
-	//---右对比区域列表框
-	QTableView *m_listRightTableView;
-	//---右对比区域格式输入框
-	QComboBox *m_fmtRightComboBox;
 };
 
 #endif // WNDBATCHRENAME_H

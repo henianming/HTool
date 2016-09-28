@@ -85,13 +85,13 @@ void CONSTANT_N(FMTFuncArg) {
 	sscanf(arg, "%d,%d", &l_F, &l_T);
 
 	if (l_F < inF) {
-		l_F = inF;
 		printf("CONSTANT_N() : (l_F = %d) < (inF = %d)\n", l_F, inF);
+		l_F = inF;
 	}
 
 	if (l_T > inT) {
+		printf("CONSTANT_N() : (l_T = %d) > (inT = %d)\n", l_T, inT);
 		l_T = inT;
-		printf("CONSTANT_N() : (l_T = %d) < (inT = %d)\n", l_T, inT);
 	}
 
 	out->first = l_F;
@@ -298,13 +298,31 @@ void fillFMTFuncStruct(struct FMTFuncStruct *out, struct FMTFuncRange const *in,
 	}
 }
 
-void fillOut(int *out, struct FMTFuncStruct *in, int inCount) {
+void fillOut(int *out, int *outCount, struct FMTFuncStruct *in, int inCount, int inLen) {
 	int i;
+	int j = 0;
+	int prevIdxTail;
 
 	for (i = 0; i < inCount; i++) {
-		out[2 * i] = in[i].first;
-		out[2 * i + 1] = in[i].tail;
+		if ((j != 0) && (in[i].first != prevIdxTail)) {
+			out[2 * j] = prevIdxTail;
+			out[2 * j + 1] = in[i].first;
+			j++;
+		}
+
+		out[2 * j] = in[i].first;
+		out[2 * j + 1] = in[i].tail;
+		prevIdxTail = in[i].tail;
+		j++;
+
+		if (i == (inCount - 1) && (in[i].tail != inLen)) {
+			out[2 * j] = in[i].tail;
+			out[2 * j + 1] = inLen;
+			j++;
+		}
 	}
+
+	*outCount = j;
 }
 
 void stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
@@ -318,6 +336,5 @@ void stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
 
 	doFMTFunc(out, in, fmtFuncStruct, funcCount);
 
-	fillOut(out, fmtFuncStruct, funcCount);
-	*outCount = funcCount;
+	fillOut(out, outCount, fmtFuncStruct, funcCount, strlen(in));
 }
