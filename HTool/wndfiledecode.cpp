@@ -1,5 +1,27 @@
 #include "wndfiledecode.h"
 
+FileListTableItem::FileListTableItem(QWidget *parent)
+	: ICustomTableItem(parent)
+{
+	pBtn = new QPushButton(this);
+}
+
+FileListTableItem::~FileListTableItem()
+{
+	AutoDelete(pBtn);
+}
+
+void FileListTableItem::draw(int indexH, int indexV, const void *data)
+{
+	pBtn->setText(*(QString const *)data);
+}
+
+ICustomTableItem *FileListTableItem::copy()
+{
+	ICustomTableItem *temp = new FileListTableItem();
+	return temp;
+}
+
 WndFileDecode::WndFileDecode(QWidget *parent)
 	: QWidget(parent)
 {
@@ -27,7 +49,6 @@ void WndFileDecode::CreateWidget()
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
-	m_listTableView = new QTableView();
 	m_fmtWidget = new QWidget();
 	m_fmtLayout = new QHBoxLayout();
 	m_fmtLabel = new QLabel();
@@ -42,7 +63,6 @@ void WndFileDecode::ReleaseWidget()
 	AutoDelete(m_fmtLabel);
 	AutoDelete(m_fmtLayout);
 	AutoDelete(m_fmtWidget);
-	AutoDelete(m_listTableView);
 	AutoDelete(m_fileInputOkBtn);
 	AutoDelete(m_fileInputLayout);
 	AutoDelete(m_fileInputWidget);
@@ -66,7 +86,6 @@ void WndFileDecode::Show()
 	this->setLayout(m_mainLayout);
 
 	m_mainLayout->addWidget(m_fileInputWidget);
-	m_mainLayout->addWidget(m_listTableView);
 	m_mainLayout->addWidget(m_fmtWidget);
 	m_mainLayout->setMargin(0);
 
@@ -116,41 +135,3 @@ void WndFileDecode::OnFmtOkBtnClicked(bool)
 	m_fmtComboBox->clear();
 	m_fmtComboBox->addItems(fmtHistoryList);
 }
-
-QWidget *CustomItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	QWidget *m = new QWidget(parent);
-	QVBoxLayout *vl = new QVBoxLayout(m);
-	QPushButton *b1 = new QPushButton(m);
-	QPushButton *b2 = new QPushButton(m);
-
-	m->setLayout(vl);
-
-	vl->addWidget(b1);
-	vl->addWidget(b2);
-	vl->setMargin(0);
-
-	return m;
-}
-
-/*
-void CustomItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
-{
-
-}
-
-void CustomItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-
-}
-
-void CustomItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-
-}
-
-void CustomItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-
-}
-*/

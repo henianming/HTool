@@ -7,10 +7,9 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include "customtable.h"
 
 #include <QFileDialog>
-#include <QItemDelegate>
-#include <QStandardItemModel>
 
 #include <iostream>
 
@@ -22,46 +21,27 @@ do{ \
 	} \
 }while(0)
 
-class CustomItemDelegate : public QItemDelegate
+class FileListTableItem : public ICustomTableItem
 {
 	Q_OBJECT
 private:
-
+	QPushButton *pBtn;
 
 public:
-	virtual QWidget *createEditor(QWidget *parent,
-								  const QStyleOptionViewItem &option,
-								  const QModelIndex &index) const;
+	FileListTableItem(QWidget *parent = 0);
+	virtual ~FileListTableItem();
 
-	/*
-	virtual void destroyEditor(QWidget *editor, const QModelIndex &index) const;
-
-	virtual void setEditorData(QWidget *editor, const QModelIndex &index) const;
-
-	virtual void setModelData(QWidget *editor,
-							  QAbstractItemModel *model,
-							  const QModelIndex &index) const;
-
-	virtual void updateEditorGeometry(QWidget *editor,
-									  const QStyleOptionViewItem &option,
-									  const QModelIndex &index) const;
-									  */
-};
-
-class CustonModel : public QStandardItemModel
-{
-	Q_OBJECT
-public:
-	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+	virtual void draw(int indexH, int indexV, void const *data);
+	virtual ICustomTableItem *copy();
 };
 
 class WndFileDecode : public QWidget
 {
 	Q_OBJECT
 public:
-	
+
 protected:
-	
+
 private:
 	//控件区
 	//主布局
@@ -71,7 +51,7 @@ private:
 	QHBoxLayout *m_fileInputLayout;
 	QPushButton *m_fileInputOkBtn;
 	//-列表控制
-	QTableView *m_listTableView;
+	CustomTable *m_fileListTable;
 	//-格式输入
 	QWidget *m_fmtWidget;
 	QHBoxLayout *m_fmtLayout;
@@ -82,7 +62,6 @@ private:
 	int m_maxCount;
 
 	QStringList fmtHistoryList;
-	CustomItemDelegate *cid;
 
 public:
 	WndFileDecode(QWidget *parent = 0);
@@ -94,16 +73,16 @@ public:
 	void Show();
 	void Hide();
 	void Update();
-	
+
 protected:
-	
+
 private:
 
 
 private slots:
 	void OnFileViewBtnClicked(bool);
 	void OnFmtOkBtnClicked(bool);
-	
+
 };
 
 #endif // WNDFILEDECODE_H

@@ -11,7 +11,7 @@
 #define FMTFuncArg struct FMTFuncStruct *out, char const *in, int inF, int inT, char const *arg
 typedef void(*FMTFunc)(struct FMTFuncStruct*, char const*, int, int, char const*);
 
-#define GNUMFuncArg int *outF, int *outT, char const *in, char const *inArg
+#define FillNumRangeFuncArg int *outF, int *outT, char const *in, int inF, int inT
 
 enum LOADSTATE {
 	LOADSTATE_1,
@@ -99,53 +99,81 @@ void CONSTANT_N(FMTFuncArg) {
 }
 
 enum LOADNUMSTATE {
-	LOADNUMSTATE_1,
-	LOADNUMSTATE_2,
-	LOADNUMSTATE_3,
+	LOADNUMSTATE_F,
+	LOADNUMSTATE_T,
+	LOADNUMSTATE_S,
 };
 
 /*
-exp:	aaaaabbb12bb
-func:	[GNUMFunc_1S(0,3)]
-result:	0,3
+desc:	寻找字符串中的第一个英文数字
 */
-void GNUMFunc_1S(GNUMFuncArg) {
+void fillNumRange_en(FillNumRangeFuncArg) {
 	int i;
-	int l_F;
-	int l_T;
-	enum LOADNUMSTATE lns = LOADNUMSTATE_1;
+	enum LOADNUMSTATE lns = LOADNUMSTATE_F;
 
-	/*
-	for (i = inF; i < inT;i++){
-	switch(lns) {
-	case LOADNUMSTATE_1:
-	if (in[i] >= '0' && in[i] <= '9') {
-	l_F = i;
-
-	lns = LOADNUMSTATE_2;
-	}
-	break;
-	case LOADNUMSTATE_2:
-	if (!(in[i] >= '0' && in[i] <= '9') || (i == (inT - 1))) {
-	l_T = i;
-
-	lns = LOADNUMSTATE_3;
-	}
-	break;
-	case LOADNUMSTATE_3:
-	*outF = l_F;
-	*outT = l_T;
-	return;
-	}
+	for (i = inF; i < inT; i++) {
+		if (!(in[i] >= '0' && in[i] <= '9')) {
+			*outF = -1;
+			*outT = -1;
+			return;
+		}
 	}
 
-	*outF = -1;
-	*outT = -1;
-	*/
+	*outF = inF;
+	*outT = inT;
 }
 
-void GNUMFunc_2S(GNUMFuncArg) {
+/*
+desc:	寻找字符串中的第一个中文简体数字
+*/
+void fillNumRange_sc(FillNumRangeFuncArg) {
 
+}
+
+/*
+desc:	寻找字符串中的第一个中文繁体数字
+*/
+void fillNumRange_tc(FillNumRangeFuncArg) {
+
+}
+
+int DecodeNum_en(char const *numStr) {
+	int idx;
+	sscanf(numStr, "%d", &idx);
+	return idx;
+}
+
+int DecodeNum_sc(char const *numStr) {
+	return -1;
+}
+
+int DecodeNum_tc(char const *numStr) {
+	return -1;
+}
+
+int DecodeNum(struct FMTFuncStruct const *inFuncStruct, char const *in) {
+	if (inFuncStruct->first == -1 || inFuncStruct->tail == -1) {
+		return -1;
+	}
+
+	int numStyle;
+
+	char numStrBuf[255];
+	int numStrLen = inFuncStruct->tail - inFuncStruct->first;
+	strncpy(numStrBuf, in + inFuncStruct->first, numStrLen);
+	numStrBuf[numStrLen] = 0;
+
+	sscanf(inFuncStruct->arg, "%d", &numStyle);
+
+	switch (numStyle) {
+	case 1:
+		return DecodeNum_en(numStrBuf);
+	case 2:
+	case 3:
+	default:
+		break;
+	}
+	return -1;
 }
 
 void NUMBER(FMTFuncArg) {
@@ -154,18 +182,28 @@ void NUMBER(FMTFuncArg) {
 	int numStyle;
 	char l_arg[FUNC_NAME_MAX] = {0};
 
-	sscanf(arg, "%d,%s", &numStyle, l_arg);
-	/*
+	sscanf(arg, "%d", &numStyle);
+
 	switch (numStyle) {
 	case 1:
-	GNUMFunc_1S(&l_F, &l_T, in, inF, inT);
-	break;
+		fillNumRange_en(&l_F, &l_T, in, inF, inT);
+		break;
 	case 2:
-	GNUMFunc_2S(&l_F, &l_T, in, inF, inT);
-	break;
+		fillNumRange_sc(&l_F, &l_T, in, inF, inT);
+		break;
+	case 3:
+		fillNumRange_tc(&l_F, &l_T, in, inF, inT);
+		break;
 	default:
-	break;
-	}*/
+		break;
+	}
+
+	out->first = l_F;
+	out->tail = l_T;
+}
+
+void INDEX(FMTFuncArg) {
+	NUMBER(out, in, inF, inT, arg);
 }
 
 /*
@@ -178,10 +216,9 @@ void VARIABLE(FMTFuncArg) {
 	out->tail = inT;
 }
 
-
-
-void doFMTFunc(int *out, char const *in, struct FMTFuncStruct *fmtFuncStruct, int fmtFuncStructCount) {
+int doFMTFunc(int *out, char const *in, struct FMTFuncStruct *fmtFuncStruct, int fmtFuncStructCount) {
 	int i, j, k;
+	int index = -1;
 
 	int fmtFuncIdxCount[PRIORITY_MAX - 1] = {0};
 	int fmtFuncIdx[PRIORITY_MAX - 1][FUNC_COUNT_MAX] = {0};
@@ -214,8 +251,14 @@ void doFMTFunc(int *out, char const *in, struct FMTFuncStruct *fmtFuncStruct, in
 			}
 
 			fmtFuncStruct[idx].func(fmtFuncStruct + idx, in, inF, inT, fmtFuncStruct[idx].arg);
+
+			if (fmtFuncStruct[idx].func == INDEX) {
+				index = DecodeNum(fmtFuncStruct + idx, in);
+			}
 		}
 	}
+
+	return index;
 }
 
 void fillFMTFuncRange(struct FMTFuncRange *out, int *outCount, char const *fmt) {
@@ -253,6 +296,9 @@ void fillFMTFuncRange(struct FMTFuncRange *out, int *outCount, char const *fmt) 
 				funcCount++;
 				ls = LOADSTATE_1;
 			}
+			else {
+				ls = LOADSTATE_3;
+			}
 			break;
 		}
 
@@ -277,6 +323,9 @@ void setFMTFuncStruct(struct FMTFuncStruct *out, char const *funcStr) {
 		out->priority = PRIORITY_CONSTANT_S;
 	} else if (strcmp("number", funcStr) == 0) {
 		out->func = NUMBER;
+		out->priority = PRIORITY_NUMBER;
+	} else if (strcmp("index", funcStr) == 0) {
+		out->func = INDEX;
 		out->priority = PRIORITY_NUMBER;
 	}
 }
@@ -325,7 +374,8 @@ void fillOut(int *out, int *outCount, struct FMTFuncStruct *in, int inCount, int
 	*outCount = j;
 }
 
-void stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
+int stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
+	int index;
 	int funcCount = 0;
 	struct FMTFuncRange fmtFuncRange[FUNC_COUNT_MAX];
 	struct FMTFuncStruct fmtFuncStruct[FUNC_COUNT_MAX];
@@ -334,7 +384,9 @@ void stringFmt(int *out, int *outCount, char const *in, char const *fmt) {
 
 	fillFMTFuncStruct(fmtFuncStruct, fmtFuncRange, funcCount, fmt);
 
-	doFMTFunc(out, in, fmtFuncStruct, funcCount);
+	int idxTemp = doFMTFunc(out, in, fmtFuncStruct, funcCount);
+	index = idxTemp;
 
 	fillOut(out, outCount, fmtFuncStruct, funcCount, strlen(in));
+	return index;
 }

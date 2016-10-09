@@ -14,6 +14,8 @@ TEMPLATE = app
 SOURCES += main.cpp\
         wndbatchrename.cpp \
 	wndfiledecode.cpp \
+    customtable.cpp
 
 HEADERS  += wndbatchrename.h \
 	wndfiledecode.h \
+    customtable.h
