@@ -49,6 +49,7 @@ void WndFileDecode::CreateWidget()
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
+	m_fileListTable = new CustomTable(FileListTableItem().copy());
 	m_fmtWidget = new QWidget();
 	m_fmtLayout = new QHBoxLayout();
 	m_fmtLabel = new QLabel();
@@ -63,6 +64,7 @@ void WndFileDecode::ReleaseWidget()
 	AutoDelete(m_fmtLabel);
 	AutoDelete(m_fmtLayout);
 	AutoDelete(m_fmtWidget);
+	AutoDelete(m_fileListTable);
 	AutoDelete(m_fileInputOkBtn);
 	AutoDelete(m_fileInputLayout);
 	AutoDelete(m_fileInputWidget);
@@ -86,6 +88,7 @@ void WndFileDecode::Show()
 	this->setLayout(m_mainLayout);
 
 	m_mainLayout->addWidget(m_fileInputWidget);
+	m_mainLayout->addWidget(m_fileListTable);
 	m_mainLayout->addWidget(m_fmtWidget);
 	m_mainLayout->setMargin(0);
 
@@ -95,6 +98,12 @@ void WndFileDecode::Show()
 	m_fileInputLayout->setMargin(0);
 
 	m_fileInputOkBtn->setText("浏览");
+
+	QString temp("aaaaaa");
+	m_fileListTable->setMinimumSize(QSize(100, 100));
+	m_fileListTable->SetHorizontalCount(5);
+	m_fileListTable->SetVerticalCount(5);
+	m_fileListTable->SetData(0, 0, &temp);
 
 	m_fmtWidget->setLayout(m_fmtLayout);
 

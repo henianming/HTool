@@ -29,7 +29,7 @@ private:
 
 public:
 	FileListTableItem(QWidget *parent = 0);
-	virtual ~FileListTableItem();
+	~FileListTableItem();
 
 	virtual void draw(int indexH, int indexV, void const *data);
 	virtual ICustomTableItem *copy();

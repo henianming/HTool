@@ -7,8 +7,8 @@ class ICustomTableItem : public QWidget
 {
 	Q_OBJECT
 public:
-	ICustomTableItem(QWidget *parent = 0);
-	virtual ~ICustomTableItem();
+	ICustomTableItem(QWidget *parent = 0) : QWidget (parent){}
+	virtual ~ICustomTableItem(){}
 
 	virtual void draw(int indexH, int indexV, void const *data) = 0;
 	virtual ICustomTableItem* copy() = 0;

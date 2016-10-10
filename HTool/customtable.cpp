@@ -2,12 +2,6 @@
 
 #include <stdlib.h>
 
-ICustomTableItem::ICustomTableItem(QWidget *parent)
-	: QWidget(parent)
-{
-
-}
-
 CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
 	: QWidget(parent)
 {
