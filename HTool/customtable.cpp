@@ -2,6 +2,14 @@
 
 #include <stdlib.h>
 
+void SetWidgetBackgroundColor(QWidget *des, QColor const &c)
+{
+	des->setAutoFillBackground(true);
+	QPalette p;
+	p.setColor(QPalette::Background, c);
+	des->setPalette(p);
+}
+
 CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
 	: QWidget(parent)
 {
@@ -133,6 +141,10 @@ void CustomTable::SetData(int indexH, int indexV, void const *data)
 	{
 		*itemPtr = m_primaryItem->copy();
 		(*itemPtr)->setParent(this);
+		SetWidgetBackgroundColor(*itemPtr, QColor(indexH % 25 * 10, indexV % 25 * 10, 0));
+
+		QSize s = m_primaryItem->size();
+		(*itemPtr)->move(indexH * s.width(), indexV * s.height());
 	}
 
 	(*itemPtr)->draw(indexH, indexV, data);

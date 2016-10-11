@@ -19,6 +19,7 @@ void FileListTableItem::draw(int indexH, int indexV, const void *data)
 ICustomTableItem *FileListTableItem::copy()
 {
 	ICustomTableItem *temp = new FileListTableItem();
+	temp->setFixedSize(100,50);
 	return temp;
 }
 
@@ -103,7 +104,13 @@ void WndFileDecode::Show()
 	m_fileListTable->setMinimumSize(QSize(100, 100));
 	m_fileListTable->SetHorizontalCount(5);
 	m_fileListTable->SetVerticalCount(5);
-	m_fileListTable->SetData(0, 0, &temp);
+	for (int i = 0; i < 5; i ++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			m_fileListTable->SetData(i, j, &temp);
+		}
+	}
 
 	m_fmtWidget->setLayout(m_fmtLayout);
 
