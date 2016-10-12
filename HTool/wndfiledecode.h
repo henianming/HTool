@@ -7,19 +7,12 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
-#include "customtable.h"
 
 #include <QFileDialog>
 
-#include <iostream>
+#include "common.h"
 
-#define AutoDelete(a) \
-do{ \
-	if (a) { \
-		delete (a); \
-		(a) = nullptr; \
-	} \
-}while(0)
+#include <iostream>
 
 class FileListTableItem : public ICustomTableItem
 {
@@ -43,16 +36,16 @@ public:
 protected:
 
 private:
-	//æ§ä»¶åŒº
-	//ä¸»å¸ƒå±€
+	//¿Ø¼şÇø
+	//Ö÷²¼¾Ö
 	QVBoxLayout *m_mainLayout;
-	//-æ–‡ä»¶è¾“å…¥
+	//-ÎÄ¼şÊäÈë
 	QWidget *m_fileInputWidget;
 	QHBoxLayout *m_fileInputLayout;
 	QPushButton *m_fileInputOkBtn;
-	//-åˆ—è¡¨æ§åˆ¶
+	//-ÁĞ±í¿ØÖÆ
 	CustomTable *m_fileListTable;
-	//-æ ¼å¼è¾“å…¥
+	//-¸ñÊ½ÊäÈë
 	QWidget *m_fmtWidget;
 	QHBoxLayout *m_fmtLayout;
 	QLabel *m_fmtLabel;

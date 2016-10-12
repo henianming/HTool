@@ -1,5 +1,7 @@
 #include "wndfiledecode.h"
 
+#pragma execution_character_set("utf-8")
+
 FileListTableItem::FileListTableItem(QWidget *parent)
 	: ICustomTableItem(parent)
 {
@@ -50,7 +52,7 @@ void WndFileDecode::CreateWidget()
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
-	m_fileListTable = new CustomTable(FileListTableItem().copy());
+	m_fileListTable = new CustomTable(&FileListTableItem());
 	m_fmtWidget = new QWidget();
 	m_fmtLayout = new QHBoxLayout();
 	m_fmtLabel = new QLabel();
@@ -98,7 +100,7 @@ void WndFileDecode::Show()
 	m_fileInputLayout->addWidget(m_fileInputOkBtn);
 	m_fileInputLayout->setMargin(0);
 
-	m_fileInputOkBtn->setText("æµè§ˆ");
+	m_fileInputOkBtn->setText("ä¯ÀÀ");
 
 	QString temp("aaaaaa");
 	m_fileListTable->setMinimumSize(QSize(100, 100));
@@ -120,11 +122,11 @@ void WndFileDecode::Show()
 	m_fmtLayout->addWidget(m_fmtOkBtn);
 	m_fmtLayout->setMargin(0);
 
-	m_fmtLabel->setText("æ ¼å¼æ–‡æœ¬ï¼š");
+	m_fmtLabel->setText("¸ñÊ½ÎÄ±¾£º");
 
 	m_fmtComboBox->setEditable(true);
 
-	m_fmtOkBtn->setText("è§£æ");
+	m_fmtOkBtn->setText("½âÎö");
 }
 
 void WndFileDecode::Hide()

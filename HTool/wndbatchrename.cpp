@@ -1,5 +1,7 @@
 #include "wndbatchrename.h"
 
+#pragma execution_character_set("utf-8")
+
 WndBatchRename::WndBatchRename(QWidget *parent)
 	: QWidget(parent)
 {
@@ -35,7 +37,7 @@ WndBatchRename::~WndBatchRename()
 
 void WndBatchRename::Show()
 {
-	this->setWindowTitle("å·¥å…·åŒ…");
+	this->setWindowTitle("¹¤¾ß°ü");
 	this->resize(m_wndDefWidth, m_wndDefHeight);
 	this->setLayout(m_mainLayout);
 

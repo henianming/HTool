@@ -17,21 +17,21 @@ private:
 	int const m_wndDefWidth = 1280;
 	int const m_wndDefHeight = 720;
 	
-	//æ§ä»¶åŒº
-	//ä¸»å¸ƒå±€
+	//¿Ø¼şÇø
+	//Ö÷²¼¾Ö
 	QVBoxLayout *m_mainLayout;
-	//-å¯¹æ¯”åŒºåŸŸ
+	//-¶Ô±ÈÇøÓò
 	QWidget *m_compareAreaWidget;
 	QHBoxLayout *m_compareAreaLayout;
-	//--å·¦å¯¹æ¯”åŒºåŸŸ------------------------------------å‡†å¤‡é›†æˆ
+	//--×ó¶Ô±ÈÇøÓò------------------------------------×¼±¸¼¯³É
 	QWidget *m_compareAreaLeftWidget;
 	QVBoxLayout *m_compareAreaLeftLayout;
-	//--ä¸­é—´æ§åˆ¶åŒº
+	//--ÖĞ¼ä¿ØÖÆÇø
 	QWidget *m_controlAreaWidget;
 	QVBoxLayout *m_controlAreaLayout;
 	QPushButton *m_l2rBtn;
 	QPushButton *m_r2lBtn;
-	//--å³å¯¹æ¯”åŒºåŸŸ------------------------------------å‡†å¤‡é›†æˆ
+	//--ÓÒ¶Ô±ÈÇøÓò------------------------------------×¼±¸¼¯³É
 	QWidget *m_compareAreaRightWidget;
 	QVBoxLayout *m_compareAreaRightLayout;
 
