@@ -6,32 +6,31 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-class WndBatchRename : public QWidget
-{
+class WndBatchRename : public QWidget {
 	Q_OBJECT
 public:
-	
+
 protected:
-	
+
 private:
 	int const m_wndDefWidth = 1280;
 	int const m_wndDefHeight = 720;
-	
-	//¿Ø¼şÇø
-	//Ö÷²¼¾Ö
+
+	//æ§ä»¶åŒº
+	//ä¸»å¸ƒå±€
 	QVBoxLayout *m_mainLayout;
-	//-¶Ô±ÈÇøÓò
+	//-å¯¹æ¯”åŒºåŸŸ
 	QWidget *m_compareAreaWidget;
 	QHBoxLayout *m_compareAreaLayout;
-	//--×ó¶Ô±ÈÇøÓò------------------------------------×¼±¸¼¯³É
+	//--å·¦å¯¹æ¯”åŒºåŸŸ------------------------------------å‡†å¤‡é›†æˆ
 	QWidget *m_compareAreaLeftWidget;
 	QVBoxLayout *m_compareAreaLeftLayout;
-	//--ÖĞ¼ä¿ØÖÆÇø
+	//--ä¸­é—´æ§åˆ¶åŒº
 	QWidget *m_controlAreaWidget;
 	QVBoxLayout *m_controlAreaLayout;
 	QPushButton *m_l2rBtn;
 	QPushButton *m_r2lBtn;
-	//--ÓÒ¶Ô±ÈÇøÓò------------------------------------×¼±¸¼¯³É
+	//--å³å¯¹æ¯”åŒºåŸŸ------------------------------------å‡†å¤‡é›†æˆ
 	QWidget *m_compareAreaRightWidget;
 	QVBoxLayout *m_compareAreaRightLayout;
 
@@ -41,9 +40,9 @@ public:
 	void Show();
 	void Hide();
 	void Update();
-	
+
 protected:
-	
+
 private:
 
 };

@@ -1,35 +1,31 @@
 #include "wndfiledecode.h"
 
-#pragma execution_character_set("utf-8")
-
+//------------------------------------------------------------------------FileListTableItem
 FileListTableItem::FileListTableItem(QWidget *parent)
-	: ICustomTableItem(parent)
-{
+	: ICustomTableItem(parent) {
 	pBtn = new QPushButton(this);
 }
 
-FileListTableItem::~FileListTableItem()
-{
-	AutoDelete(pBtn);
+FileListTableItem::~FileListTableItem() {
+	SAFEDELETE(pBtn);
 }
 
-void FileListTableItem::draw(int indexH, int indexV, const void *data)
-{
-	pBtn->setText(*(QString const *)data);
+void FileListTableItem::draw(int indexH, int indexV, const void *data) {
+	UNUSED(indexH);
+	UNUSED(indexV);
+
+	pBtn->setText(*static_cast<QString const*>(data));
 }
 
-ICustomTableItem *FileListTableItem::copy()
-{
+ICustomTableItem *FileListTableItem::copy() {
 	ICustomTableItem *temp = new FileListTableItem();
-	temp->setFixedSize(100,50);
+	temp->setFixedSize(100, 50);
 	return temp;
 }
 
+//------------------------------------------------------------------------WndFileDecode
 WndFileDecode::WndFileDecode(QWidget *parent)
-	: QWidget(parent)
-{
-	m_maxCount = 5;
-
+	: QWidget(parent) {
 	CreateWidget();
 
 	Show();
@@ -37,8 +33,7 @@ WndFileDecode::WndFileDecode(QWidget *parent)
 	BatchConnect();
 }
 
-WndFileDecode::~WndFileDecode()
-{
+WndFileDecode::~WndFileDecode() {
 	BatchDisconnect();
 
 	Hide();
@@ -46,13 +41,13 @@ WndFileDecode::~WndFileDecode()
 	ReleaseWidget();
 }
 
-void WndFileDecode::CreateWidget()
-{
+void WndFileDecode::CreateWidget() {
 	m_mainLayout = new QVBoxLayout();
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
-	m_fileListTable = new CustomTable(&FileListTableItem());
+	FileListTableItem itemTemp;
+	m_fileListTable = new CustomTable(&itemTemp);
 	m_fmtWidget = new QWidget();
 	m_fmtLayout = new QHBoxLayout();
 	m_fmtLabel = new QLabel();
@@ -60,34 +55,30 @@ void WndFileDecode::CreateWidget()
 	m_fmtOkBtn = new QPushButton();
 }
 
-void WndFileDecode::ReleaseWidget()
-{
-	AutoDelete(m_fmtOkBtn);
-	AutoDelete(m_fmtComboBox);
-	AutoDelete(m_fmtLabel);
-	AutoDelete(m_fmtLayout);
-	AutoDelete(m_fmtWidget);
-	AutoDelete(m_fileListTable);
-	AutoDelete(m_fileInputOkBtn);
-	AutoDelete(m_fileInputLayout);
-	AutoDelete(m_fileInputWidget);
-	AutoDelete(m_mainLayout);
+void WndFileDecode::ReleaseWidget() {
+	SAFEDELETE(m_fmtOkBtn);
+	SAFEDELETE(m_fmtComboBox);
+	SAFEDELETE(m_fmtLabel);
+	SAFEDELETE(m_fmtLayout);
+	SAFEDELETE(m_fmtWidget);
+	SAFEDELETE(m_fileListTable);
+	SAFEDELETE(m_fileInputOkBtn);
+	SAFEDELETE(m_fileInputLayout);
+	SAFEDELETE(m_fileInputWidget);
+	SAFEDELETE(m_mainLayout);
 }
 
-void WndFileDecode::BatchConnect()
-{
+void WndFileDecode::BatchConnect() {
 	connect(m_fileInputOkBtn, SIGNAL(clicked(bool)), this, SLOT(OnFileViewBtnClicked(bool)));
 	connect(m_fmtOkBtn, SIGNAL(clicked(bool)), this, SLOT(OnFmtOkBtnClicked(bool)));
 }
 
-void WndFileDecode::BatchDisconnect()
-{
+void WndFileDecode::BatchDisconnect() {
 	disconnect(m_fmtOkBtn, SIGNAL(clicked(bool)), this, SLOT(OnFmtOkBtnClicked(bool)));
 	disconnect(m_fileInputOkBtn, SIGNAL(clicked(bool)), this, SLOT(OnFileViewBtnClicked(bool)));
 }
 
-void WndFileDecode::Show()
-{
+void WndFileDecode::Show() {
 	this->setLayout(m_mainLayout);
 
 	m_mainLayout->addWidget(m_fileInputWidget);
@@ -96,25 +87,27 @@ void WndFileDecode::Show()
 	m_mainLayout->setMargin(0);
 
 	m_fileInputWidget->setLayout(m_fileInputLayout);
+	m_fileInputWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	m_fileInputLayout->addWidget(m_fileInputOkBtn);
+	m_fileInputLayout->setAlignment(Qt::AlignRight);
 	m_fileInputLayout->setMargin(0);
 
-	m_fileInputOkBtn->setText("ä¯ÀÀ");
+	m_fileInputOkBtn->setText("æµè§ˆ");
 
 	QString temp("aaaaaa");
+	m_fileListTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	m_fileListTable->setMinimumSize(QSize(100, 100));
 	m_fileListTable->SetHorizontalCount(5);
 	m_fileListTable->SetVerticalCount(5);
-	for (int i = 0; i < 5; i ++)
-	{
-		for (int j = 0; j < 5; j++)
-		{
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
 			m_fileListTable->SetData(i, j, &temp);
 		}
 	}
 
 	m_fmtWidget->setLayout(m_fmtLayout);
+	m_fmtWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	m_fmtLayout->addWidget(m_fmtLabel);
 	m_fmtLayout->addWidget(m_fmtComboBox);
@@ -122,30 +115,25 @@ void WndFileDecode::Show()
 	m_fmtLayout->addWidget(m_fmtOkBtn);
 	m_fmtLayout->setMargin(0);
 
-	m_fmtLabel->setText("¸ñÊ½ÎÄ±¾£º");
+	m_fmtLabel->setText("æ ¼å¼æ–‡æœ¬ï¼š");
 
 	m_fmtComboBox->setEditable(true);
 
-	m_fmtOkBtn->setText("½âÎö");
+	m_fmtOkBtn->setText("è§£æž");
 }
 
-void WndFileDecode::Hide()
-{
+void WndFileDecode::Hide() {
 }
 
-void WndFileDecode::Update()
-{
+void WndFileDecode::Update() {
 }
 
-void WndFileDecode::OnFileViewBtnClicked(bool)
-{
+void WndFileDecode::OnFileViewBtnClicked(bool) {
 
 }
 
-void WndFileDecode::OnFmtOkBtnClicked(bool)
-{
-	if (fmtHistoryList.count() == m_maxCount)
-	{
+void WndFileDecode::OnFmtOkBtnClicked(bool) {
+	if (fmtHistoryList.count() == m_maxCount) {
 		fmtHistoryList.pop_back();
 	}
 	fmtHistoryList.push_front(m_fmtComboBox->currentText());

@@ -12,10 +12,7 @@
 
 #include "common.h"
 
-#include <iostream>
-
-class FileListTableItem : public ICustomTableItem
-{
+class FileListTableItem : public ICustomTableItem {
 	Q_OBJECT
 private:
 	QPushButton *pBtn;
@@ -28,31 +25,26 @@ public:
 	virtual ICustomTableItem *copy();
 };
 
-class WndFileDecode : public QWidget
-{
+class WndFileDecode : public QWidget {
 	Q_OBJECT
-public:
-
-protected:
-
 private:
-	//¿Ø¼şÇø
-	//Ö÷²¼¾Ö
+	//æ§ä»¶åŒº
+	//ä¸»å¸ƒå±€
 	QVBoxLayout *m_mainLayout;
-	//-ÎÄ¼şÊäÈë
+	//-æ–‡ä»¶è¾“å…¥
 	QWidget *m_fileInputWidget;
 	QHBoxLayout *m_fileInputLayout;
 	QPushButton *m_fileInputOkBtn;
-	//-ÁĞ±í¿ØÖÆ
+	//-åˆ—è¡¨æ§åˆ¶
 	CustomTable *m_fileListTable;
-	//-¸ñÊ½ÊäÈë
+	//-æ ¼å¼è¾“å…¥
 	QWidget *m_fmtWidget;
 	QHBoxLayout *m_fmtLayout;
 	QLabel *m_fmtLabel;
 	QComboBox *m_fmtComboBox;
 	QPushButton *m_fmtOkBtn;
 
-	int m_maxCount;
+	int const m_maxCount = 5;
 
 	QStringList fmtHistoryList;
 
@@ -67,12 +59,7 @@ public:
 	void Hide();
 	void Update();
 
-protected:
-
-private:
-
-
-private slots:
+	private slots:
 	void OnFileViewBtnClicked(bool);
 	void OnFmtOkBtnClicked(bool);
 

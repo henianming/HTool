@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-09-19T13:22:27
+# Project created by QtCreator 2016-10-14T13:14:38
 #
 #-------------------------------------------------
 
@@ -11,11 +11,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = HTool
 TEMPLATE = app
 
-SOURCES += main.cpp\
-        wndbatchrename.cpp \
-	wndfiledecode.cpp \
-    customtable.cpp
+INCLUDEPATH += \
+	common\
 
-HEADERS  += wndbatchrename.h \
-	wndfiledecode.h \
-    customtable.h
+
+SOURCES += \
+	main.cpp\
+    common/function/helpfunc.cpp \
+    common/widget/customtable.cpp \
+    wndbatchrename.cpp \
+    wndfiledecode.cpp
+
+HEADERS  += \
+    common/function/helpfunc.h \
+    common/widget/customtable.h \
+    common/common.h \
+    wndbatchrename.h \
+    wndfiledecode.h

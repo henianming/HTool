@@ -1,10 +1,7 @@
 #include "wndbatchrename.h"
 
-#pragma execution_character_set("utf-8")
-
 WndBatchRename::WndBatchRename(QWidget *parent)
-	: QWidget(parent)
-{
+	: QWidget(parent) {
 	m_mainLayout = new QVBoxLayout();
 	m_compareAreaWidget = new QWidget();
 	m_compareAreaLayout = new QHBoxLayout();
@@ -20,24 +17,44 @@ WndBatchRename::WndBatchRename(QWidget *parent)
 	Show();
 }
 
-WndBatchRename::~WndBatchRename()
-{
-	if (m_compareAreaRightLayout) {delete m_compareAreaRightLayout; m_compareAreaRightLayout = NULL;}
-	if (m_compareAreaRightWidget) {delete m_compareAreaRightWidget; m_compareAreaRightWidget = NULL;}
-	if (m_r2lBtn) {delete m_r2lBtn; m_r2lBtn = NULL;}
-	if (m_l2rBtn) {delete m_l2rBtn; m_l2rBtn = NULL;}
-	if (m_controlAreaLayout) {delete m_controlAreaLayout; m_controlAreaLayout = NULL;}
-	if (m_controlAreaWidget) {delete m_controlAreaWidget; m_controlAreaWidget = NULL;}
-	if (m_compareAreaLeftLayout) {delete m_compareAreaLeftLayout; m_compareAreaLeftLayout = NULL;}
-	if (m_compareAreaLeftWidget) {delete m_compareAreaLeftWidget; m_compareAreaLeftWidget = NULL;}
-	if (m_compareAreaLayout) {delete m_compareAreaLayout; m_compareAreaLayout = NULL;}
-	if (m_compareAreaWidget) {delete m_compareAreaWidget; m_compareAreaWidget = NULL;}
-	if (m_mainLayout) {delete m_mainLayout; m_mainLayout = NULL;}
+WndBatchRename::~WndBatchRename() {
+	if (m_compareAreaRightLayout) {
+		delete m_compareAreaRightLayout; m_compareAreaRightLayout = NULL;
+	}
+	if (m_compareAreaRightWidget) {
+		delete m_compareAreaRightWidget; m_compareAreaRightWidget = NULL;
+	}
+	if (m_r2lBtn) {
+		delete m_r2lBtn; m_r2lBtn = NULL;
+	}
+	if (m_l2rBtn) {
+		delete m_l2rBtn; m_l2rBtn = NULL;
+	}
+	if (m_controlAreaLayout) {
+		delete m_controlAreaLayout; m_controlAreaLayout = NULL;
+	}
+	if (m_controlAreaWidget) {
+		delete m_controlAreaWidget; m_controlAreaWidget = NULL;
+	}
+	if (m_compareAreaLeftLayout) {
+		delete m_compareAreaLeftLayout; m_compareAreaLeftLayout = NULL;
+	}
+	if (m_compareAreaLeftWidget) {
+		delete m_compareAreaLeftWidget; m_compareAreaLeftWidget = NULL;
+	}
+	if (m_compareAreaLayout) {
+		delete m_compareAreaLayout; m_compareAreaLayout = NULL;
+	}
+	if (m_compareAreaWidget) {
+		delete m_compareAreaWidget; m_compareAreaWidget = NULL;
+	}
+	if (m_mainLayout) {
+		delete m_mainLayout; m_mainLayout = NULL;
+	}
 }
 
-void WndBatchRename::Show()
-{
-	this->setWindowTitle("¹¤¾ß°ü");
+void WndBatchRename::Show() {
+	this->setWindowTitle("å·¥å…·åŒ…");
 	this->resize(m_wndDefWidth, m_wndDefHeight);
 	this->setLayout(m_mainLayout);
 
@@ -63,10 +80,8 @@ void WndBatchRename::Show()
 	m_compareAreaRightWidget->setLayout(m_compareAreaRightLayout);
 }
 
-void WndBatchRename::Hide()
-{
+void WndBatchRename::Hide() {
 }
 
-void WndBatchRename::Update()
-{
+void WndBatchRename::Update() {
 }

@@ -3,170 +3,182 @@
 #include <stdlib.h>
 #include "common.h"
 
-CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
-	: QWidget(parent)
-{
-	m_primaryItem = item->copy();
+//------------------------------------------------------------------------ICustomTableItem
+ICustomTableItem::ICustomTableItem(QWidget *parent)
+	: QWidget(parent) {
 
+}
+
+ICustomTableItem::~ICustomTableItem() {
+
+}
+
+//------------------------------------------------------------------------CustomTable
+CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
+	: QScrollArea(parent) {
 	m_widgetHorizontalCount = 0;
 	m_widgetVerticalCount = 0;
+
+	m_primaryItem = item->copy();
+
 	m_widgetItemTable = NULL;
+
+	CreateWidget();
+
+	Show();
 }
 
-CustomTable::~CustomTable()
-{
-	if (m_widgetItemTable) free(m_widgetItemTable);
-	if (m_primaryItem) free(m_primaryItem);
+CustomTable::~CustomTable() {
+	Hide();
+
+	ReleaseWidget();
+
+	CleanAllData();
+	SAFEDELETE(m_widgetItemTable);
+
+	SAFEDELETE(m_primaryItem);
 }
 
-void CustomTable::SetHorizontalCount(int count)
+void CustomTable::CreateWidget()
 {
-	//ÊıÁ¿Î´±äÖ±½Ó·µ»Ø
-	if (m_widgetHorizontalCount == count)
-	{
+	m_itemAreaWidget = new QWidget(this);
+}
+
+void CustomTable::ReleaseWidget()
+{
+	SAFEDELETE(m_itemAreaWidget);
+}
+
+void CustomTable::Show()
+{
+	this->setWidget(m_itemAreaWidget);
+	//m_itemAreaScrollArea->setGeometry(0,0,300,400);
+	//m_itemAreaWidget->setGeometry(0,0,200,200);
+
+	SetWidgetBackgroundColor(m_itemAreaWidget, QColor(200,200,200));
+}
+
+void CustomTable::Hide()
+{
+
+}
+
+void CustomTable::SetHorizontalCount(int count) {
+	//æ•°é‡æœªå˜ç›´æ¥è¿”å›
+	if (m_widgetHorizontalCount == count) {
 		return;
 	}
 
-	//±£´æÒÔÇ°µÄË®Æ½¸öÊı£¬ÉèÖÃĞÂµÄË®Æ½¸öÊı
+	//ä¿å­˜ä»¥å‰çš„æ°´å¹³ä¸ªæ•°ï¼Œè®¾ç½®æ–°çš„æ°´å¹³ä¸ªæ•°
 	int prevCount = m_widgetHorizontalCount;
 	m_widgetHorizontalCount = count;
 
 	int itemCount = m_widgetHorizontalCount * m_widgetVerticalCount;
-	//ÈôË®Æ½¸öÊı»ò´¹Ö±¸öÊıÎª0£¬Çå¿Õ±í·µ»Ø
-	if (itemCount == 0)
-	{
+	//è‹¥æ°´å¹³ä¸ªæ•°æˆ–å‚ç›´ä¸ªæ•°ä¸º0ï¼Œæ¸…ç©ºè¡¨è¿”å›
+	if (itemCount == 0) {
 		CleanAllData();
 		return;
 	}
 
-	//·ÖÅäĞÂµÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
-	ICustomTableItem **temp = (ICustomTableItem**)calloc(itemCount, sizeof(ICustomTableItem*));
+	//åˆ†é…æ–°çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
+	ICustomTableItem **temp = static_cast<ICustomTableItem**>(calloc(static_cast<size_t>(itemCount), sizeof(ICustomTableItem*)));
 
-	//¿½±´Ô­ÓĞµÄ»¹ÓĞÓÃµÄÊı¾İ
-	for (int i = 0; i < prevCount; i++)
-	{
-		for (int j = 0; j < m_widgetVerticalCount; j++)
-		{
-			if (i < m_widgetHorizontalCount)
-			{
+	//æ‹·è´åŸæœ‰çš„è¿˜æœ‰ç”¨çš„æ•°æ®
+	for (int i = 0; i < prevCount; i++) {
+		for (int j = 0; j < m_widgetVerticalCount; j++) {
+			if (i < m_widgetHorizontalCount) {
 				*(temp + j * m_widgetHorizontalCount + i) = *(m_widgetItemTable + j * prevCount + i);
-			}
-			else
-			{
-				if (*(m_widgetItemTable + j * prevCount + i))
-				{
-					//ÒÆ³ıitem
-					delete *(m_widgetItemTable + j * prevCount + i);
-				}
+			} else {
+				SAFEDELETE(*(m_widgetItemTable + j * prevCount + i));
 			}
 		}
 	}
 
-	//ÊÍ·ÅÔ­À´µÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
+	//é‡Šæ”¾åŸæ¥çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
 	free(m_widgetItemTable);
 
-	//ÉèÖÃĞÂµÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
+	//è®¾ç½®æ–°çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
 	m_widgetItemTable = temp;
 }
 
-void CustomTable::SetVerticalCount(int count)
-{
-	//ÊıÁ¿Î´±äÖ±½Ó·µ»Ø
-	if (m_widgetVerticalCount == count)
-	{
+void CustomTable::SetVerticalCount(int count) {
+	//æ•°é‡æœªå˜ç›´æ¥è¿”å›
+	if (m_widgetVerticalCount == count) {
 		return;
 	}
 
-	//±£´æÒÔÇ°µÄ´¹Ö±¸öÊı£¬ÉèÖÃĞÂµÄ´¹Ö±¸öÊı
+	//ä¿å­˜ä»¥å‰çš„å‚ç›´ä¸ªæ•°ï¼Œè®¾ç½®æ–°çš„å‚ç›´ä¸ªæ•°
 	int prevCount = m_widgetVerticalCount;
 	m_widgetVerticalCount = count;
 
 	int itemCount = m_widgetHorizontalCount * m_widgetVerticalCount;
-	//ÈôË®Æ½¸öÊı»ò´¹Ö±¸öÊıÎª0£¬Çå¿Õ±í·µ»Ø
-	if (itemCount == 0)
-	{
+	//è‹¥æ°´å¹³ä¸ªæ•°æˆ–å‚ç›´ä¸ªæ•°ä¸º0ï¼Œæ¸…ç©ºè¡¨è¿”å›
+	if (itemCount == 0) {
 		CleanAllData();
 		return;
 	}
 
-	//·ÖÅäĞÂµÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
-	ICustomTableItem **temp = (ICustomTableItem**)calloc(itemCount, sizeof(ICustomTableItem*));
+	//åˆ†é…æ–°çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
+	ICustomTableItem **temp = static_cast<ICustomTableItem**>(calloc(static_cast<size_t>(itemCount), sizeof(ICustomTableItem*)));
 
-	//¿½±´Ô­ÓĞµÄ»¹ÓĞÓÃµÄÊı¾İ
-	for (int i = 0; i < m_widgetHorizontalCount; i++)
-	{
-		for (int j = 0; j < prevCount; j++)
-		{
-			if (j < m_widgetVerticalCount)
-			{
+	//æ‹·è´åŸæœ‰çš„è¿˜æœ‰ç”¨çš„æ•°æ®
+	for (int i = 0; i < m_widgetHorizontalCount; i++) {
+		for (int j = 0; j < prevCount; j++) {
+			if (j < m_widgetVerticalCount) {
 				*(temp + j * m_widgetHorizontalCount + i) = *(m_widgetItemTable + j * m_widgetHorizontalCount + i);
-			}
-			else
-			{
-				if (*(m_widgetItemTable + j * m_widgetHorizontalCount + i))
-				{
-					//ÒÆ³ıitem
-					delete *(m_widgetItemTable + j * m_widgetHorizontalCount + i);
-				}
+			} else {
+				SAFEDELETE(*(m_widgetItemTable + j * m_widgetHorizontalCount + i));
 			}
 		}
 	}
 
-	//ÊÍ·ÅÔ­À´µÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
+	//é‡Šæ”¾åŸæ¥çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
 	free(m_widgetItemTable);
 
-	//ÉèÖÃĞÂµÄ±£´æitemÖ¸ÕëµÄ¿Õ¼ä
+	//è®¾ç½®æ–°çš„ä¿å­˜itemæŒ‡é’ˆçš„ç©ºé—´
 	m_widgetItemTable = temp;
 }
 
-void CustomTable::SetData(int indexH, int indexV, void const *data)
-{
+void CustomTable::SetData(int indexH, int indexV, void const *data) {
 	if (indexH >= m_widgetHorizontalCount
 		|| indexH < 0
 		|| indexV >= m_widgetVerticalCount
-		|| indexV < 0)
-	{
+		|| indexV < 0) {
 		return;
 	}
 
+	//è·å–å…‹éš†ä½“
 	ICustomTableItem **itemPtr = m_widgetItemTable + indexV * m_widgetHorizontalCount + indexH;
-	if (!(*itemPtr))
-	{
+	//è‹¥æ— ï¼Œåˆ™åˆ›å»ºæ–°çš„
+	if (!(*itemPtr)) {
+		//å…‹éš†åŸå‹
 		*itemPtr = m_primaryItem->copy();
-		(*itemPtr)->setParent(this);
-		SetWidgetBackgroundColor(*itemPtr, QColor(indexH % 25 * 10, indexV % 25 * 10, 0));
+		(*itemPtr)->setParent(m_itemAreaWidget);
 
+		//å°†å…‹éš†ä½“ç§»åˆ°å¯¹åº”ä½ç½®
 		QSize s = m_primaryItem->size();
 		(*itemPtr)->move(indexH * s.width(), indexV * s.height());
 	}
 
+	//è®©å…‹éš†ä½“è‡ªè¡Œç»˜åˆ¶
 	(*itemPtr)->draw(indexH, indexV, data);
 }
 
-void CustomTable::CleanData(int indexH, int indexV)
-{
+void CustomTable::CleanData(int indexH, int indexV) {
 	if (indexH >= m_widgetHorizontalCount
 		|| indexH < 0
 		|| indexV >= m_widgetVerticalCount
-		|| indexV < 0)
-	{
+		|| indexV < 0) {
 		return;
 	}
 
 	ICustomTableItem **itemPtr = m_widgetItemTable + indexV * m_widgetHorizontalCount + indexH;
-	if (*itemPtr)
-	{
-		delete *itemPtr;
-		*itemPtr = NULL;
-	}
+	SAFEDELETENULL(*itemPtr);
 }
 
-void CustomTable::CleanAllData()
-{
-	for (int i = 0; i < m_widgetHorizontalCount; i++)
-	{
-		for (int j = 0; j < m_widgetVerticalCount; j++)
-		{
+void CustomTable::CleanAllData() {
+	for (int i = 0; i < m_widgetHorizontalCount; i++) {
+		for (int j = 0; j < m_widgetVerticalCount; j++) {
 			CleanData(i, j);
 		}
 	}
