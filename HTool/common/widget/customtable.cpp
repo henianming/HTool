@@ -1,6 +1,5 @@
 #include "customtable.h"
 
-#include <stdlib.h>
 #include "common.h"
 
 //------------------------------------------------------------------------ICustomTableItem
@@ -21,22 +20,24 @@ CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
 
 	m_primaryItem = item->copy();
 
-	m_widgetItemTable = NULL;
-
 	CreateWidget();
 
 	Show();
 }
 
 CustomTable::~CustomTable() {
+	int i;
+
 	Hide();
 
 	ReleaseWidget();
 
-	CleanAllData();
-	SAFEDELETE(m_widgetItemTable);
+	int count = static_cast<int>(m_widgetItemVector.size());
+	for(i = 0; i < count; i++) {
+		SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(i)));
+	}
 
-	SAFEDELETE(m_primaryItem);
+	SAFEDELETENULL(m_primaryItem);
 }
 
 void CustomTable::CreateWidget()
@@ -46,7 +47,7 @@ void CustomTable::CreateWidget()
 
 void CustomTable::ReleaseWidget()
 {
-	SAFEDELETE(m_itemAreaWidget);
+	SAFEDELETENULL(m_itemAreaWidget);
 }
 
 void CustomTable::Show()
@@ -64,6 +65,8 @@ void CustomTable::Hide()
 }
 
 void CustomTable::SetHorizontalCount(int count) {
+	int i;
+
 	//数量未变直接返回
 	if (m_widgetHorizontalCount == count) {
 		return;
@@ -81,27 +84,29 @@ void CustomTable::SetHorizontalCount(int count) {
 	}
 
 	//分配新的保存item指针的空间
-	ICustomTableItem **temp = static_cast<ICustomTableItem**>(calloc(static_cast<size_t>(itemCount), sizeof(ICustomTableItem*)));
+	std::vector<ICustomTableItem*> temp;
+	for(i = 0; i < itemCount; i++) {
+		temp.push_back(NULL);
+	}
 
 	//拷贝原有的还有用的数据
 	for (int i = 0; i < prevCount; i++) {
 		for (int j = 0; j < m_widgetVerticalCount; j++) {
 			if (i < m_widgetHorizontalCount) {
-				*(temp + j * m_widgetHorizontalCount + i) = *(m_widgetItemTable + j * prevCount + i);
+				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i));
 			} else {
-				SAFEDELETE(*(m_widgetItemTable + j * prevCount + i));
+				SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i)));
 			}
 		}
 	}
 
-	//释放原来的保存item指针的空间
-	free(m_widgetItemTable);
-
 	//设置新的保存item指针的空间
-	m_widgetItemTable = temp;
+	m_widgetItemVector.swap(temp);
 }
 
 void CustomTable::SetVerticalCount(int count) {
+	int i;
+
 	//数量未变直接返回
 	if (m_widgetVerticalCount == count) {
 		return;
@@ -119,24 +124,24 @@ void CustomTable::SetVerticalCount(int count) {
 	}
 
 	//分配新的保存item指针的空间
-	ICustomTableItem **temp = static_cast<ICustomTableItem**>(calloc(static_cast<size_t>(itemCount), sizeof(ICustomTableItem*)));
+	std::vector<ICustomTableItem*> temp;
+	for(i = 0; i < itemCount; i++) {
+		temp.push_back(NULL);
+	}
 
 	//拷贝原有的还有用的数据
 	for (int i = 0; i < m_widgetHorizontalCount; i++) {
 		for (int j = 0; j < prevCount; j++) {
 			if (j < m_widgetVerticalCount) {
-				*(temp + j * m_widgetHorizontalCount + i) = *(m_widgetItemTable + j * m_widgetHorizontalCount + i);
+				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i));
 			} else {
-				SAFEDELETE(*(m_widgetItemTable + j * m_widgetHorizontalCount + i));
+				SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)));
 			}
 		}
 	}
 
-	//释放原来的保存item指针的空间
-	free(m_widgetItemTable);
-
 	//设置新的保存item指针的空间
-	m_widgetItemTable = temp;
+	m_widgetItemVector.swap(temp);
 }
 
 void CustomTable::SetData(int indexH, int indexV, void const *data) {
@@ -148,20 +153,20 @@ void CustomTable::SetData(int indexH, int indexV, void const *data) {
 	}
 
 	//获取克隆体
-	ICustomTableItem **itemPtr = m_widgetItemTable + indexV * m_widgetHorizontalCount + indexH;
+	ICustomTableItem *itemPtr = m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH));
 	//若无，则创建新的
-	if (!(*itemPtr)) {
+	if (!itemPtr) {
 		//克隆原型
-		*itemPtr = m_primaryItem->copy();
-		(*itemPtr)->setParent(m_itemAreaWidget);
+		m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH)) = m_primaryItem->copy();
+		m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH))->setParent(m_itemAreaWidget);
 
 		//将克隆体移到对应位置
 		QSize s = m_primaryItem->size();
-		(*itemPtr)->move(indexH * s.width(), indexV * s.height());
+		m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH))->move(indexH * s.width(), indexV * s.height());
 	}
 
 	//让克隆体自行绘制
-	(*itemPtr)->draw(indexH, indexV, data);
+	m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH))->draw(indexH, indexV, data);
 }
 
 void CustomTable::CleanData(int indexH, int indexV) {
@@ -172,8 +177,7 @@ void CustomTable::CleanData(int indexH, int indexV) {
 		return;
 	}
 
-	ICustomTableItem **itemPtr = m_widgetItemTable + indexV * m_widgetHorizontalCount + indexH;
-	SAFEDELETENULL(*itemPtr);
+	SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(indexV * m_widgetHorizontalCount + indexH)));
 }
 
 void CustomTable::CleanAllData() {

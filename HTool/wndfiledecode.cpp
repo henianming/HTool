@@ -105,6 +105,7 @@ void WndFileDecode::Show() {
 			m_fileListTable->SetData(i, j, &temp);
 		}
 	}
+	m_fileListTable->SetVerticalCount(6);
 
 	m_fmtWidget->setLayout(m_fmtLayout);
 	m_fmtWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

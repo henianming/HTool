@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QScrollArea>
+#include <vector>
 
 class ICustomTableItem : public QWidget {
 	Q_OBJECT
@@ -22,7 +23,8 @@ private:
 	int m_widgetHorizontalCount;
 	int m_widgetVerticalCount;
 	ICustomTableItem *m_primaryItem;
-	ICustomTableItem **m_widgetItemTable;
+	//ICustomTableItem **m_widgetItemTable;
+	std::vector<ICustomTableItem*> m_widgetItemVector;
 
 public:
 	CustomTable(ICustomTableItem *item, QWidget *parent = 0);
