@@ -20,11 +20,13 @@ SOURCES += \
     common/function/helpfunc.cpp \
     common/widget/customtable.cpp \
     wndbatchrename.cpp \
-    wndfiledecode.cpp
+    wndfiledecode.cpp \
+    common/widget/resizeablewidget.cpp
 
 HEADERS  += \
     common/function/helpfunc.h \
     common/widget/customtable.h \
     common/common.h \
     wndbatchrename.h \
-    wndfiledecode.h
+    wndfiledecode.h \
+    common/widget/resizeablewidget.h

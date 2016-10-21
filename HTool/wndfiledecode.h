@@ -36,6 +36,7 @@ private:
 	QHBoxLayout *m_fileInputLayout;
 	QPushButton *m_fileInputOkBtn;
 	//-列表控制
+	ResizeAbleWidget *testWidget;
 	CustomTable *m_fileListTable;
 	//-格式输入
 	QWidget *m_fmtWidget;

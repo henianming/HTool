@@ -46,6 +46,7 @@ void WndFileDecode::CreateWidget() {
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
+	testWidget = new ResizeAbleWidget();
 	FileListTableItem itemTemp;
 	m_fileListTable = new CustomTable(&itemTemp);
 	m_fmtWidget = new QWidget();
@@ -82,6 +83,7 @@ void WndFileDecode::Show() {
 	this->setLayout(m_mainLayout);
 
 	m_mainLayout->addWidget(m_fileInputWidget);
+	m_mainLayout->addWidget(testWidget);
 	m_mainLayout->addWidget(m_fileListTable);
 	m_mainLayout->addWidget(m_fmtWidget);
 	m_mainLayout->setMargin(0);
@@ -94,6 +96,10 @@ void WndFileDecode::Show() {
 	m_fileInputLayout->setMargin(0);
 
 	m_fileInputOkBtn->setText("浏览");
+
+	testWidget->setFixedSize(400, 20);
+	testWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	SetWidgetBackgroundColor(testWidget, QColor(100, 100, 100));
 
 	QString temp("aaaaaa");
 	m_fileListTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
