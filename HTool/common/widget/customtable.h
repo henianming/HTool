@@ -23,14 +23,12 @@ private:
 	int m_widgetHorizontalCount;
 	int m_widgetVerticalCount;
 	ICustomTableItem *m_primaryItem;
-	//ICustomTableItem **m_widgetItemTable;
 	std::vector<ICustomTableItem*> m_widgetItemVector;
 
 public:
 	CustomTable(ICustomTableItem *item, QWidget *parent = 0);
 	~CustomTable();
-	void CreateWidget();
-	void ReleaseWidget();
+	void InitWidget();
 	void BatchConnect();
 	void BatchDisconnect();
 	void Show();

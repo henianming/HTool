@@ -20,41 +20,26 @@ CustomTable::CustomTable(ICustomTableItem *item, QWidget *parent)
 
 	m_primaryItem = item->copy();
 
-	CreateWidget();
+	InitWidget();
 
 	Show();
 }
 
 CustomTable::~CustomTable() {
-	int i;
-
 	Hide();
 
-	ReleaseWidget();
-
-	int count = static_cast<int>(m_widgetItemVector.size());
-	for(i = 0; i < count; i++) {
-		SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(i)));
-	}
-
-	SAFEDELETENULL(m_primaryItem);
+	SAFEDELETE(m_primaryItem);
 }
 
-void CustomTable::CreateWidget()
+void CustomTable::InitWidget()
 {
 	m_itemAreaWidget = new QWidget(this);
-}
-
-void CustomTable::ReleaseWidget()
-{
-	SAFEDELETENULL(m_itemAreaWidget);
 }
 
 void CustomTable::Show()
 {
 	this->setWidget(m_itemAreaWidget);
-	//m_itemAreaScrollArea->setGeometry(0,0,300,400);
-	//m_itemAreaWidget->setGeometry(0,0,200,200);
+	m_itemAreaWidget->setGeometry(0,0,400,500);
 
 	SetWidgetBackgroundColor(m_itemAreaWidget, QColor(200,200,200));
 }
@@ -95,7 +80,7 @@ void CustomTable::SetHorizontalCount(int count) {
 			if (i < m_widgetHorizontalCount) {
 				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i));
 			} else {
-				SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i)));
+				SAFEDELETE(m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i)));
 			}
 		}
 	}
@@ -135,7 +120,7 @@ void CustomTable::SetVerticalCount(int count) {
 			if (j < m_widgetVerticalCount) {
 				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i));
 			} else {
-				SAFEDELETENULL(m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)));
+				SAFEDELETE(m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)));
 			}
 		}
 	}
