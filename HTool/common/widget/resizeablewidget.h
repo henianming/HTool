@@ -7,21 +7,19 @@ class ResizeAbleWidget : public QWidget
 {
 	Q_OBJECT
 private:
-	bool m_tDragEnable;
-	bool m_bDragEnable;
-	bool m_lDragEnable;
-	bool m_rDragEnable;
-	bool m_cDragEnable;
+	int m_accuracyPix;
 
 protected:
-	void enterEvent(QEvent *event);
-	void leaveEvent(QEvent *event);
 	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 
 public:
-	ResizeAbleWidget(QWidget *parent = 0);
+	ResizeAbleWidget(int accuracyPix = 1, QWidget *parent = 0);
 	~ResizeAbleWidget();
+
+signals:
+	void press()
 };
 
 #endif
