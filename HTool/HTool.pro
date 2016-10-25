@@ -21,7 +21,7 @@ SOURCES += \
     common/widget/customtable.cpp \
     wndbatchrename.cpp \
     wndfiledecode.cpp \
-    common/widget/resizeablewidget.cpp
+    common/widget/edgesensitivewidget.cpp
 
 HEADERS  += \
     common/function/helpfunc.h \
@@ -29,4 +29,4 @@ HEADERS  += \
     common/common.h \
     wndbatchrename.h \
     wndfiledecode.h \
-    common/widget/resizeablewidget.h
+    common/widget/edgesensitivewidget.h

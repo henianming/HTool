@@ -46,7 +46,7 @@ void WndFileDecode::CreateWidget() {
 	m_fileInputWidget = new QWidget();
 	m_fileInputLayout = new QHBoxLayout();
 	m_fileInputOkBtn = new QPushButton();
-	testWidget = new ResizeAbleWidget();
+	testWidget = new EdgeSensitiveWidget();
 	FileListTableItem itemTemp;
 	m_fileListTable = new CustomTable(&itemTemp);
 	m_fmtWidget = new QWidget();
