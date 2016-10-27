@@ -21,5 +21,7 @@ do{ \
 #define UNUSED(a) ((void)(a))
 
 void SetWidgetBackgroundColor(QWidget *des, QColor const &c);
+bool IsInRange(int l, int s, int b);
+bool IsPointInArea(const QPoint &point, const QRect &rect);
 
 #endif //HELPFUNC_H

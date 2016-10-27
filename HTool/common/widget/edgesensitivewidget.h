@@ -2,6 +2,7 @@
 #define RESIZEABLEWIDGET_H
 
 #include <QWidget>
+#include "common.h"
 
 enum EdgeSensitive_Area
 {
@@ -24,7 +25,6 @@ private:
 	int m_sensitivePix;
 
 private:
-	bool isInRange(int l, int s, int b);
 	EdgeSensitive_Area isInSensitiveArea(int x, int y);
 
 protected:

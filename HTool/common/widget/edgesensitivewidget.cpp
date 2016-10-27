@@ -26,15 +26,8 @@ void EdgeSensitiveWidget::setSensitivePix(int sensitivePix)
 	m_sensitivePix = sensitivePix;
 }
 
-bool EdgeSensitiveWidget::isInRange(int l, int s, int b)
-{
-	return (l >= s) && (l <= b);
-}
-
 EdgeSensitive_Area EdgeSensitiveWidget::isInSensitiveArea(int x, int y)
 {
-	int mX = event->pos().x();
-	int mY = event->pos().y();
 	QRect rc = this->rect();
 	QPoint gp = this->mapToGlobal(QPoint(0, 0));
 	int height = rc.height();
@@ -44,38 +37,41 @@ EdgeSensitive_Area EdgeSensitiveWidget::isInSensitiveArea(int x, int y)
 	rc.setLeft(gp.x());
 	rc.setRight(gp.x() + width - 1);
 
-	if (isInRange(mX, rc.left() + m_sensitivePix, rc.right() - m_sensitivePix) && isInRange(mY, rc.top(), rc.top() + m_sensitivePix))
+	QPoint mousePoint(x, y);
+	if (IsPointInArea(mousePoint, QRect(rc.left() + m_sensitivePix, rc.top(), rc.width() - 2 * m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_Top
+		return EdgeSensitive_Top;
 	}
-	else if (isInRange(mX, rc.right() - m_sensitivePix, rc.right()) && isInRange(mY, rc.top(), rc.top() + m_sensitivePix))
+	else if (IsPointInArea(mousePoint, QRect(rc.left() + rc.width() - m_sensitivePix, rc.top(), m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_TopRight
+		return EdgeSensitive_TopRight;
 	}
-	else if (isInRange(mX, rc.right() - m_sensitivePix, rc.right()) && isInRange(mY, rc.top() + m_sensitivePix, rc.bottom() - m_sensitivePix))
+	else if (IsPointInArea(mousePoint, QRect(rc.left() + rc.width() - m_sensitivePix, rc.top() + m_sensitivePix, m_sensitivePix, rc.height() - 2 * m_sensitivePix)))
 	{
-		//EdgeSensitive_Right
+		return EdgeSensitive_Right;
 	}
-	else if (isInRange(mX, rc.right() - m_sensitivePix, rc.right()) && isInRange(mY, rc.bottom() - m_sensitivePix, rc.bottom()))
+	else if (IsPointInArea(mousePoint, QRect(rc.left() + rc.width() - m_sensitivePix, rc.top() + rc.height() - m_sensitivePix, m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_RightBottom
+		return EdgeSensitive_RightBottom;
 	}
-	else if (isInRange(mX, rc.left() + m_sensitivePix, rc.right() - m_sensitivePix) && isInRange(mY, rc.bottom() - m_sensitivePix, rc.bottom()))
+	else if (IsPointInArea(mousePoint, QRect(rc.left() + m_sensitivePix, rc.top() + rc.height() - m_sensitivePix, rc.width() - 2 * m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_Bottom
+		return EdgeSensitive_Bottom;
 	}
-	else if (isInRange(mX, rc.left(), rc.left() + m_sensitivePix) && isInRange(mY, rc.bottom() - m_sensitivePix, rc.bottom()))
+	else if (IsPointInArea(mousePoint, QRect(rc.left(), rc.top() + rc.height() - m_sensitivePix, m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_BottomLeft
+		return EdgeSensitive_BottomLeft;
 	}
-	else if (isInRange(mX, rc.left(), rc.left() + m_sensitivePix) && isInRange(mY, rc.top() + m_sensitivePix, rc.bottom() - m_sensitivePix))
+	else if (IsPointInArea(mousePoint, QRect(rc.left(), rc.top() + m_sensitivePix, m_sensitivePix, rc.height() - 2 * m_sensitivePix)))
 	{
-		//EdgeSensitive_Left
+		return EdgeSensitive_Left;
 	}
-	else if (isInRange(mX, rc.left(), rc.left() + m_sensitivePix) && isInRange(mY, rc.top(), rc.top() + m_sensitivePix))
+	else if (IsPointInArea(mousePoint, QRect(rc.left(), rc.top(), m_sensitivePix, m_sensitivePix)))
 	{
-		//EdgeSensitive_LeftTop
+		return EdgeSensitive_LeftTop;
 	}
+
+	return EdgeSensitive_None;
 }
 
 void EdgeSensitiveWidget::mousePressEvent(QMouseEvent *event)
