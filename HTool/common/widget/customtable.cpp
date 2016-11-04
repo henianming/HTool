@@ -2,6 +2,9 @@
 
 #include "common.h"
 
+#include <iostream>
+using namespace std;
+
 //------------------------------------------------------------------------ICustomTableItem
 ICustomTableItem::ICustomTableItem(QWidget *parent)
 	: QWidget(parent) {
@@ -50,8 +53,6 @@ void CustomTable::Hide()
 }
 
 void CustomTable::SetHorizontalCount(int count) {
-	int i;
-
 	//数量未变直接返回
 	if (m_widgetHorizontalCount == count) {
 		return;
@@ -68,19 +69,20 @@ void CustomTable::SetHorizontalCount(int count) {
 		return;
 	}
 
-	//分配新的保存item指针的空间
 	std::vector<ICustomTableItem*> temp;
-	for(i = 0; i < itemCount; i++) {
-		temp.push_back(NULL);
-	}
 
 	//拷贝原有的还有用的数据
-	for (int i = 0; i < prevCount; i++) {
-		for (int j = 0; j < m_widgetVerticalCount; j++) {
-			if (i < m_widgetHorizontalCount) {
-				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i));
-			} else {
+	int horizontalNeedDealCount = (prevCount > m_widgetHorizontalCount) ? prevCount : m_widgetHorizontalCount;
+	for (int j = 0; j < m_widgetVerticalCount; j++) {
+		for (int i = 0; i < horizontalNeedDealCount; i++) {
+			if (i >= prevCount && i < m_widgetHorizontalCount) {
+				temp.push_back(NULL);
+			}
+			else if(i >= m_widgetHorizontalCount && i < prevCount) {
 				SAFEDELETE(m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i)));
+			}
+			else {
+				temp.push_back(m_widgetItemVector.at(static_cast<size_t>(j * prevCount + i)));
 			}
 		}
 	}
@@ -90,8 +92,6 @@ void CustomTable::SetHorizontalCount(int count) {
 }
 
 void CustomTable::SetVerticalCount(int count) {
-	int i;
-
 	//数量未变直接返回
 	if (m_widgetVerticalCount == count) {
 		return;
@@ -108,19 +108,20 @@ void CustomTable::SetVerticalCount(int count) {
 		return;
 	}
 
-	//分配新的保存item指针的空间
 	std::vector<ICustomTableItem*> temp;
-	for(i = 0; i < itemCount; i++) {
-		temp.push_back(NULL);
-	}
 
 	//拷贝原有的还有用的数据
-	for (int i = 0; i < m_widgetHorizontalCount; i++) {
-		for (int j = 0; j < prevCount; j++) {
-			if (j < m_widgetVerticalCount) {
-				temp.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)) = m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i));
-			} else {
+	int verticalNeedDealCount = (prevCount > m_widgetVerticalCount) ? prevCount : m_widgetVerticalCount;
+	for (int j = 0; j < verticalNeedDealCount; j++) {
+		for (int i = 0; i < m_widgetHorizontalCount; i++) {
+			if (j >= prevCount && j < m_widgetVerticalCount) {
+				temp.push_back(NULL);
+			}
+			else if(i >= m_widgetVerticalCount && i < prevCount) {
 				SAFEDELETE(m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)));
+			}
+			else {
+				temp.push_back(m_widgetItemVector.at(static_cast<size_t>(j * m_widgetHorizontalCount + i)));
 			}
 		}
 	}

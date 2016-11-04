@@ -24,20 +24,25 @@ class EdgeSensitiveWidget : public QWidget
 private:
 	int m_sensitivePix;
 
-private:
-	EdgeSensitive_Area isInSensitiveArea(int x, int y);
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-
 public:
 	EdgeSensitiveWidget(int sensitivePix = 1, QWidget *parent = 0);
 	~EdgeSensitiveWidget();
 
 	int getSensitivePix();
 	void setSensitivePix(int sensitivePix);
+
+protected:
+	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+
+private:
+	EdgeSensitive_Area isInSensitiveArea(int x, int y);
+
+signals:
+	void MouseRelease(QMouseEvent *event);
+	void MousePress(QMouseEvent *event);
+	void MoveIntoSensitiveArea(EdgeSensitive_Area areaType);
 };
 
 #endif

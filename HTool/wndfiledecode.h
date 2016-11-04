@@ -60,7 +60,7 @@ public:
 	void Hide();
 	void Update();
 
-	private slots:
+private slots:
 	void OnFileViewBtnClicked(bool);
 	void OnFmtOkBtnClicked(bool);
 

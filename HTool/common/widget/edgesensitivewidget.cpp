@@ -29,13 +29,6 @@ void EdgeSensitiveWidget::setSensitivePix(int sensitivePix)
 EdgeSensitive_Area EdgeSensitiveWidget::isInSensitiveArea(int x, int y)
 {
 	QRect rc = this->rect();
-	QPoint gp = this->mapToGlobal(QPoint(0, 0));
-	int height = rc.height();
-	int width = rc.width();
-	rc.setTop(gp.y());
-	rc.setBottom(gp.y() + height - 1);
-	rc.setLeft(gp.x());
-	rc.setRight(gp.x() + width - 1);
 
 	QPoint mousePoint(x, y);
 	if (IsPointInArea(mousePoint, QRect(rc.left() + m_sensitivePix, rc.top(), rc.width() - 2 * m_sensitivePix, m_sensitivePix)))
@@ -76,45 +69,17 @@ EdgeSensitive_Area EdgeSensitiveWidget::isInSensitiveArea(int x, int y)
 
 void EdgeSensitiveWidget::mousePressEvent(QMouseEvent *event)
 {
-	/*
-	EdgeSensitive_Area s;
-	switch(event->button())
-	{
-	case Qt::LeftButton:
-		s = "LeftButton";
-		break;
-	case Qt::MidButton:
-		s = "MidButton";
-		break;
-	case Qt::RightButton:
-		s = "RightButton";
-		break;
-	}
-	cout << "mousePress:local->" << s << "  X->" << event->pos().x() << "   Y->" << event->pos().y() << endl;
-	*/
+	emit MousePress(event);
 }
 
 void EdgeSensitiveWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	/*
-	string s;
-	switch(event->button())
-	{
-	case Qt::LeftButton:
-		s = "LeftButton";
-		break;
-	case Qt::MidButton:
-		s = "MidButton";
-		break;
-	case Qt::RightButton:
-		s = "RightButton";
-		break;
-	}
-	cout << "mousePress:local->" << s << "  X->" << event->pos().x() << "   Y->" << event->pos().y() << endl;
-	*/
+	emit MouseRelease(event);
 }
 
 void EdgeSensitiveWidget::mouseMoveEvent(QMouseEvent *event)
 {
+	EdgeSensitive_Area area = isInSensitiveArea(event->x(), event->y());
 
+	emit MoveIntoSensitiveArea(area);
 }
